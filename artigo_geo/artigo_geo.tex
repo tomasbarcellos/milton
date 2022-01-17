@@ -1,0 +1,132 @@
+\documentclass[article]{jss}
+\usepackage[utf8]{inputenc}
+
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+\author{
+FirstName LastName\\University/Company \And Second Author\\Affiliation
+}
+\title{A Capitalized Title: Something about a Package \pkg{foo}}
+
+\Plainauthor{FirstName LastName, Second Author}
+\Plaintitle{A Capitalized Title: Something about a Package foo}
+\Shorttitle{\pkg{foo}: A Capitalized Title}
+
+\Abstract{
+The abstract of the article.
+}
+
+\Keywords{keywords, not capitalized, \proglang{Java}}
+\Plainkeywords{keywords, not capitalized, Java}
+
+%% publication information
+%% \Volume{50}
+%% \Issue{9}
+%% \Month{June}
+%% \Year{2012}
+%% \Submitdate{}
+%% \Acceptdate{2012-06-04}
+
+\Address{
+    FirstName LastName\\
+  University/Company\\
+  First line Second line\\
+  E-mail: \email{name@company.com}\\
+  URL: \url{http://rstudio.com}\\~\\
+    }
+
+% Pandoc header
+
+\usepackage{amsmath}
+
+\begin{document}
+
+\hypertarget{introduction}{%
+\section{Introduction}\label{introduction}}
+
+SHORT INTRO {[}Geo data is increasingly important, review{]}\\
+Our aim was to develop a R package to help researcher (in the clinical,
+social sciences, etc) in dealing with geospatial data.\\
+We searched for geospatial packages in the CRAN repository. A short
+description of each package is avaliable in Table\ref{table1}. Few of
+them are intended for the researcher who is not familiar with more
+complex coding.\\
+Since tabular is the most used type of dataset, our package offers
+functions to extract and transform data from shapefiles to regular
+datasets.\\
+@ Merge tabular and geospatial data\\
+We also included functions to calculate distances between points in a
+shapefile. Our package calculate distances from raw addresses or
+coordinates (latidude, longitude). @ Minimum Distance\\
+@ Given a list of address, returns the closest one
+
+\begin{table}[h]
+\begin{tabular}{|l|l|}
+\hline
+\textbf{Package} & \textbf{Description} \\ \hline
+APfun & Utilities for handling shapefiles and polygons (merge, etc.) \\ \hline
+aspace & \vbox{\hbox{\strut Centrographic statistics, computational geometry, and home}\hbox{\strut range ecology for exploring human activities in cities}} \\ \hline
+bbo & Geographical distribution of biological organisms \\ \hline
+biogeo & Conversion of standards and units, outliers and error detection \\ \hline
+BPEC & DNA Analysis of clusters and migration patterns using mitochondrial DNA \\ \hline
+btb & Kernel density estimator for urban environment with geolocal data \\ \hline
+ClustGeo & Hierarchical clustering with Ward criterion for geolocal data \\ \hline
+gcKrig & Geospatial analysis with gaussian copulas \\ \hline
+gdalUtils & Utilities for gdal (Geospatial Data Abstraction Library)  \\ \hline
+gdistance & Routes and distances in heterogeneous spaces using grids \\ \hline
+gear & Statistical methods for spatial analysis (e.g. glm) \\ \hline
+geoaxe & Cuts 'geospatial' objects into disjoint areas \\ \hline
+geoBayes & Bayesian analysis with geographical data \\ \hline
+GeoBoxplot & Boxplot for geospatial plots  \\ \hline
+geoCount & Generalized spatial models for count data \\ \hline
+geodist & High performance geodesical distances  \\ \hline
+geofacet & Creates grid of plots in ggplot following the contour of a map  \\ \hline
+geofd & Kriging methods for predictiong of spatially dependet curves. \\ \hline
+geoGAM & Spatial prediction using complex models  \\ \hline
+geomerge & Merges rasters, polygons and points \\ \hline
+geoR & Complete framework for geospatial analysis \\ \hline
+geoRglm & geoR extension for generalized linear models  \\ \hline
+georob & Linear models with spatially correlated errors and cross-validation  \\ \hline
+georob & Functions for dealing with linear models with spatially correlated errors  \\ \hline
+geospacom & Calculate distance matrix from shapefiles \\ \hline
+geospt & Network measures, variogram  \\ \hline
+geosptdb & Geostatistical analysis of spatial data \\ \hline
+geostatsp & Geostatistical Analysis, satial sampling networks \\ \hline
+geotools & Functions for dealing with postal codes; distances between two coordinates \\ \hline
+geotoolsR & Bootstraping methods for geostatistics \\ \hline
+geozoning & Zoning \\ \hline
+Gmedian & Estimation of the geometric median, k-Gmedian clustering, PCA \\ \hline
+gstat & Spatial and Spatio-Temporal geostatistical modelling, prediction and simulation \\ \hline
+GWLelast & Geographically weighted logistic elastic net regression \\ \hline
+gwrr & Geographically weighted regression \\ \hline
+krige & Kriging models for geographical point-referenced data \\ \hline
+mapStats & Calculation and visualization of survey data \\ \hline
+nngeo & K-nearest neighboor (Clustering) for spatial data \\ \hline
+pointdensityP & Point density for geospatial data \\ \hline
+ramps & Bayesian geostatistical modeling of Gaussian processes \\ \hline
+revgeo & Reverse geocode with APIs \\ \hline
+rgdal & Bindings for the 'Geospatial' Data Abstraction Library (GDAL) \\ \hline
+sgeostat & Functions for variogram estimation, variogram fitting, kriging, plotting \\ \hline
+spcosa & Spatial coverage sampling and random sampling, clustering \\ \hline
+vapour & Binding for GDAL \\ \hline
+georob & Methods for fitting linear models with spatially correlated errors \\ \hline
+geospacom DW & Distance matrix from shape files \\ \hline
+geoSpectral DW & Functions for dealing with geo-spectral data \\ \hline
+\label{table1}
+\end{tabular}
+\end{table}
+
+@ Adicionar quais aceitam endereços como entrada
+
+\hypertarget{an-example-with-simulated-data}{%
+\section{An Example with Simulated
+Data}\label{an-example-with-simulated-data}}
+
+@ Distance to the school and school performance (school p
+\textasciitilde{} distance); @ Minimum distance to two schools.
+
+
+
+\end{document}
+
