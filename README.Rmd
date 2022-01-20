@@ -50,17 +50,57 @@ A função `geopart` permite identificar o polígono ao qual uma coordenada
 # exemplo geopart
 ```
 
+Criando dados para usar nos exemplos a seguir.
+
+```{r}
+set.seed(2600)
+
+# Three centers
+
+schoolA <- c(-46.642902,-23.610586)
+## Escola Municipal de Ensino Fundamental Parque das Flores
+schoolB <- c(-46.636747,-23.608101)
+## Escola Municipal Jean Mermoz
+schoolC <- c(-46.633597,-23.605939)
+## EMEI PAULO ALVES, TTE.
+
+## Sample lat and lon
+
+sim_df2 <- data.frame(group = c(rep('A',40),rep('B',40),rep('C',40)))
+
+sim_df2$lat[1:40] <- rnorm(n=40,mean=schoolA[2],sd=.003)
+sim_df2$lon[1:40] <- rnorm(n=40,mean=schoolA[1],sd=.003)
+
+sim_df2$lat[41:80] <- rnorm(n=40,mean=schoolB[2],sd=.003)
+sim_df2$lon[41:80] <- rnorm(n=40,mean=schoolB[1],sd=.003)
+
+sim_df2$lat[81:120] <- rnorm(n=40,mean=schoolC[2],sd=.003)
+sim_df2$lon[81:120] <- rnorm(n=40,mean=schoolC[1],sd=.003)
+
+school_mat <- rbind(schoolA,schoolB,schoolC) %>% 
+  transform(group = c("SchoolA", "SchoolB", "SchoolC"))
+
+colnames(school_mat)[1:2] <- c("lat","lon")
+```
+
+
 Com `nearplace` é possível identificar o local (dado uma lista) mais próximo 
 de um ponto.
 
 ```{r}
-# exemplo nearplace
+nearplace(coords = sim_df2[,c("lon","lat")],
+          targets = school_mat,
+          target_label = "group")
+
 ```
 
 `min_dist` retorna a menor distância entre um ponto e um conjunto de localidades.
 
 ```{r}
-# exemplo min_dist
+# Min. Distance
+min_dists <- min_dist(coords = sim_df2[,c("lon","lat")],
+         targets = school_mat)
+
 ```
 
 
