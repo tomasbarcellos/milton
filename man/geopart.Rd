@@ -4,8 +4,12 @@
 \alias{geopart}
 \title{geopart}
 \usage{
-geopart(shape_file, dataset, coord_names = c("lon", "lat"),
-  proj_specs = "+proj=longlat +zone=23 +south +ellps=aust_SA +units=m +no_defs")
+geopart(
+  shape_file,
+  dataset,
+  coord_names = c("lon", "lat"),
+  proj_specs = "+proj=longlat +zone=23 +south +ellps=aust_SA +units=m +no_defs"
+)
 }
 \arguments{
 \item{shape_file}{A SpatialPolygonsDataFrame object created using sp package}
