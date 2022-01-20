@@ -4,7 +4,7 @@
 \alias{min_dist}
 \title{min_dist}
 \usage{
-min_dist(coords, targets, coord_names = c("lon", "lat"), great_circ = T)
+min_dist(coords, targets, coord_names = c("lon", "lat"), great_circ = TRUE)
 }
 \arguments{
 \item{coords}{A nx2 matrix or data frame containing geocoordinates for n subjects.}

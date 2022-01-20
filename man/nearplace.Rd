@@ -8,7 +8,7 @@ nearplace(
   coords,
   targets,
   coord_names = c("lon", "lat"),
-  great_circ = T,
+  great_circ = TRUE,
   target_label = "names"
 )
 }
