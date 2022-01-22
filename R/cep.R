@@ -3,7 +3,6 @@
 #' @param x CEP buscado
 #'
 #' @return Endereco do CEP como texto
-#' @export
 #'
 #' @examples
 #' cep(88063000)

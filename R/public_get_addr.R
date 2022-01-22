@@ -8,10 +8,16 @@
 #'
 
 get_addr <- function(address = NULL){
+  if (is.numeric(address)) {
+    return(get_addr(cep(address)))
+  }
+
   vazio <- tibble::tibble(lon = numeric(), lat = numeric())
 
-  if(suppressWarnings(is.null(address)))
+  if(suppressWarnings(is.null(address))) {
     return(vazio)
+  }
+
 
   tryCatch(
     d <- jsonlite::fromJSON(
@@ -21,5 +27,5 @@ get_addr <- function(address = NULL){
   )
   if(length(d) == 0) return(vazio)
 
-  return(tibble::tibble(lon = as.numeric(d$lon), lat = as.numeric(d$lat)))
+  tibble::tibble(lon = as.numeric(d$lon), lat = as.numeric(d$lat))
 }
