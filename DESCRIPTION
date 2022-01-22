@@ -19,5 +19,6 @@ Imports:
 URL: https://tomasbarcellos.github.io/milton
 Suggests: 
     testthat (>= 3.0.0),
-    covr
+    covr,
+    geobr
 Config/testthat/edition: 3

@@ -8,20 +8,10 @@
 #' @export
 #'
 
-geopart <- function(shape_file, dataset,
-                    coord_names=c("lon","lat"),
-                    proj_specs="+proj=longlat +zone=23 +south +ellps=aust_SA +units=m +no_defs"){
+geopart <- function(dataset, shape_file){
+  d <- lapply(seq_len(nrow(dataset)), function (i) sf::st_point(as.matrix(dataset[i, ])))
 
-  sample_coords <- dataset[,coord_names]
-  dataset[,coord_names] <- list(NULL)
-
-  setor_sens_init <- sp::spTransform(shape_file,
-                                 sp::CRS(proj_specs))
-
-  sample_coords_spdf <- sp::SpatialPointsDataFrame(coords = sample_coords,
-                                               data=dataset,
-                                               proj4string = sp::CRS(proj_specs))
-
-  sample_over <- sp::over(sample_coords_spdf,setor_sens_init)
-  return(cbind(dataset,sample_coords,sample_over))
-  }
+  idx <- lapply(d, sf::st_within, y = shape_file$geometry) %>%
+    unlist()
+  shape_file[idx, ]
+}
