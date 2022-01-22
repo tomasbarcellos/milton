@@ -8,19 +8,10 @@
 #' @export
 #'
 
-nearplace <- function(coords, targets, coord_names = c("lon","lat"),
-                      great_circ = TRUE, target_label="names"){
+nearplace <- function(coords, targets){
+  dists <- distancia(coords, targets)
 
-  coord_list <- split(coords, seq(nrow(coords)))
+  idx <- apply(dists, 1, function(x) which(x == min(x, na.rm = TRUE)))
 
-  f_targets <- targets[,colnames(targets) %in% coord_names] %>% as.matrix()
-  # f: Finds minimum distance to targets
-
-  nearestplace <- purrr::map(.f = function(x) sp::spDistsN1(pt=x %>% unlist(), # Dist: coord vs. targets
-                                                   pts = f_targets,
-                                                   longlat = great_circ) %>%
-                               which.min() %>% # min value
-                             targets[.,target_label], # Corresponding label
-                        .x=coord_list) %>% unlist()  # subjects
-  return(nearestplace)
+  targets[idx, ]
 }

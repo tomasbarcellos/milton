@@ -4,8 +4,10 @@
 #'
 #' @return Endereco do CEP como texto
 #'
+#' @importFrom magrittr %>%
 #' @examples
 #' cep(88063000)
+#'
 cep <- function(x) {
   httr::POST("https://www.achecep.com.br/",
                      body = list(
@@ -17,5 +19,4 @@ cep <- function(x) {
     rvest::html_children() %>%
     rvest::html_text() %>%
     magrittr::extract2(1)
-
 }

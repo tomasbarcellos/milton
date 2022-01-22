@@ -4,13 +4,7 @@
 \alias{nearplace}
 \title{nearplace}
 \usage{
-nearplace(
-  coords,
-  targets,
-  coord_names = c("lon", "lat"),
-  great_circ = TRUE,
-  target_label = "names"
-)
+nearplace(coords, targets)
 }
 \arguments{
 \item{coords}{A nx2 matrix or data frame containing geocoordinates for n subjects.}

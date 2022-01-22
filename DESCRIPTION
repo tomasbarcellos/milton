@@ -14,7 +14,8 @@ Imports:
     sp,
     jsonlite,
     tibble,
-    httr
+    httr,
+    rvest
 URL: https://tomasbarcellos.github.io/milton
 Suggests: 
     testthat (>= 3.0.0),
