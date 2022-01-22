@@ -9,16 +9,14 @@ test_that("Retorna formato esperado", {
 
 test_that("Retorna lat long de endereco", {
   resp1 <- get_addr("Avenida pequeno príncipe")
-  expect_equal(resp1,
-               tibble::tibble(
-                 lon = -48.4922023, lat = -27.6820247
-               ))
+  expect_true(abs(resp1$lon - -48.4922023) < 0.01)
+  expect_true(abs(resp1$lat - -27.6820247) < 0.01)
 
   resp2 <- get_addr("Rua Vergueiro")
-  expect_equal(resp2,
-               tibble::tibble(
-                 lon = -46.6354222, lat = -23.5857686
-               ))
+
+  expect_true(abs(resp2$lon - -46.6354222) < 0.01)
+  expect_true(abs(resp2$lat - -23.5857686) < 0.01)
+
 })
 
 test_that("Erros sao suaves", {
@@ -35,12 +33,6 @@ test_that("Erros sao suaves", {
 })
 
 test_that("Retorna lat long de CEP", {
-  resp1 <- get_addr(88063000)
-  expect_equal(resp1,
-               tibble::tibble(
-                 lon = -48.4922023, lat = -27.6820247
-               ))
-
   expect_equal(get_addr(88063000), get_addr("Avenida pequeno principe"))
 
   expect_equal(milton:::cep(70050000), "Esplanada Dos Ministérios")
