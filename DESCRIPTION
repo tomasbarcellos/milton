@@ -13,7 +13,8 @@ Imports:
     magrittr,
     sp,
     jsonlite,
-    tibble
+    tibble,
+    httr
 URL: https://tomasbarcellos.github.io/milton
 Suggests: 
     testthat (>= 3.0.0),
