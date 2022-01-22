@@ -11,5 +11,9 @@ RoxygenNote: 7.1.2
 Imports: 
     purrr,
     magrittr,
-    sp
+    sp,
+    jsonlite,
+    tibble
 URL: https://tomasbarcellos.github.io/milton
+Suggests: 
+    covr
