@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://tomasbarcellos.github.io/milton/index.html</loc>
+  </url>
+  <url>
+    <loc>https://tomasbarcellos.github.io/milton/reference/geopart.html</loc>
+  </url>
+  <url>
+    <loc>https://tomasbarcellos.github.io/milton/reference/get_addr.html</loc>
+  </url>
+  <url>
+    <loc>https://tomasbarcellos.github.io/milton/reference/min_dist.html</loc>
+  </url>
+  <url>
+    <loc>https://tomasbarcellos.github.io/milton/reference/nearplace.html</loc>
+  </url>
+  <url>
+    <loc>https://tomasbarcellos.github.io/milton/reference/pipe.html</loc>
+  </url>
+</urlset>
