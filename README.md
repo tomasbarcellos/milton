@@ -18,7 +18,7 @@ You can install the development version of milton from
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("fargolo/milton-geo")
+devtools::install_github("tomasbarcellos/milton")
 ```
 
 ## Example
