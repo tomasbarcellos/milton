@@ -44,22 +44,15 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">geopart</span><span class="op">(</span>
-  <span class="va">shape_file</span>,
-  <span class="va">dataset</span>,
-  coord_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"lon"</span>, <span class="st">"lat"</span><span class="op">)</span>,
-  proj_specs <span class="op">=</span> <span class="st">"+proj=longlat +zone=23 +south +ellps=aust_SA +units=m +no_defs"</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">geopart</span><span class="op">(</span><span class="va">dataset</span>, <span class="va">shape_file</span><span class="op">)</span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>shape_file</dt>
-<dd><p>A SpatialPolygonsDataFrame object created using sp package</p></dd>
-<dt>dataset</dt>
+    <dl><dt>dataset</dt>
 <dd><p>A data.frame or matrix object containing lon/lat coordinates</p></dd>
-<dt>coord_names</dt>
-<dd><p>List of characters contaning variable names for lon/lat collumns. Defaults to c("lon","lat")</p></dd>
+<dt>shape_file</dt>
+<dd><p>A SpatialPolygonsDataFrame object created using sp package</p></dd>
 </dl></div>
 
   </div>
