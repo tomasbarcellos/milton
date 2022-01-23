@@ -4,6 +4,12 @@
     <loc>https://tomasbarcellos.github.io/milton/index.html</loc>
   </url>
   <url>
+    <loc>https://tomasbarcellos.github.io/milton/reference/cep.html</loc>
+  </url>
+  <url>
+    <loc>https://tomasbarcellos.github.io/milton/reference/distancia.html</loc>
+  </url>
+  <url>
     <loc>https://tomasbarcellos.github.io/milton/reference/geopart.html</loc>
   </url>
   <url>
@@ -17,5 +23,8 @@
   </url>
   <url>
     <loc>https://tomasbarcellos.github.io/milton/reference/pipe.html</loc>
+  </url>
+  <url>
+    <loc>https://tomasbarcellos.github.io/milton/reference/remove_zero.html</loc>
   </url>
 </urlset>
