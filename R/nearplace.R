@@ -4,10 +4,9 @@
 #' Uses sp spDistsN1 with Great Circle distance as default.
 #'
 #' @param coords A nx2 matrix or data frame containing geocoordinates for n subjects.
-#' @param points A mx2 matrix containing a set of geocoordinates for m target locations.
+#' @param targets A mx2 matrix containing a set of geocoordinates for m target locations.
 #' @export
 #'
-
 nearplace <- function(coords, targets){
   dists <- distancia(coords, targets)
 

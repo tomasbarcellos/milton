@@ -10,8 +10,6 @@ geopart(dataset, shape_file)
 \item{dataset}{A data.frame or matrix object containing lon/lat coordinates}
 
 \item{shape_file}{A SpatialPolygonsDataFrame object created using sp package}
-
-\item{coord_names}{List of characters contaning variable names for lon/lat collumns. Defaults to c("lon","lat")}
 }
 \description{
 Partitions a dataset according to the location area each observation belongs to.

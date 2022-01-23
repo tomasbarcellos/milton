@@ -5,14 +5,10 @@
 #' @return Endereco do CEP como texto
 #'
 #' @importFrom magrittr %>%
-#' @examples
-#' cep(88063000)
 #'
 cep <- function(x) {
   httr::POST("https://www.achecep.com.br/",
-                     body = list(
-                       q = x
-                     ),
+                     body = list(q = x),
                      encode = "form") %>%
     httr::content() %>%
     rvest::html_node(".verbeteEndereco") %>%

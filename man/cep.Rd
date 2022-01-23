@@ -15,7 +15,3 @@ Endereco do CEP como texto
 \description{
 CEP
 }
-\examples{
-cep(88063000)
-
-}

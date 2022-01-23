@@ -9,7 +9,7 @@ nearplace(coords, targets)
 \arguments{
 \item{coords}{A nx2 matrix or data frame containing geocoordinates for n subjects.}
 
-\item{points}{A mx2 matrix containing a set of geocoordinates for m target locations.}
+\item{targets}{A mx2 matrix containing a set of geocoordinates for m target locations.}
 }
 \description{
 Returns the nearest pleace given a set of targets and a dataframe with coordinates.

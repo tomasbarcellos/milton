@@ -9,7 +9,7 @@ min_dist(coords, targets)
 \arguments{
 \item{coords}{A nx2 matrix or data frame containing geocoordinates for n subjects.}
 
-\item{points}{A mx2 matrix containing a set of geocoordinates for m target locations.}
+\item{targets}{A mx2 matrix containing a set of geocoordinates for m target locations.}
 }
 \description{
 Returns the minimum distance to a set of targets given a dataframe with coordinates.
