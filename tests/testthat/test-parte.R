@@ -10,7 +10,7 @@ X <- rbind(x, y, z, w)
 regioes <- readRDS("regioes.rds")
 mun <- readRDS("mun.rds")
 
-cens <- cens3 <- sf::st_read("inst/extdata/setor censitario", "DEINFO_SETOR_CENSITARIO_2010") %>%
+cens <- sf::st_read("inst/extdata/setor censitario", "DEINFO_SETOR_CENSITARIO_2010") %>%
   sf::st_transform("+proj=longlat +zone=23 +south +ellps=aust_SA +units=m +no_defs") %>%
   sf::st_as_sf()
 

@@ -35,94 +35,64 @@ com a função `get_addr`.
 ``` r
 library(milton)
 get_addr("Avenida Heróis do Acre")
-#>         lon       lat
-#> 1 -38.53066 -3.803069
+#> # A tibble: 1 x 2
+#>     lon   lat
+#>   <dbl> <dbl>
+#> 1 -38.5 -3.80
 ```
 
 A função `geopart` permite identificar o polígono ao qual uma coordenada
 (ou ponto) pertence.
 
-``` r
-# exemplo geopart
-```
-
 Criando dados para usar nos exemplos a seguir.
-
-``` r
-set.seed(2600)
-
-# Three centers
-
-schoolA <- c(-46.642902,-23.610586)
-## Escola Municipal de Ensino Fundamental Parque das Flores
-schoolB <- c(-46.636747,-23.608101)
-## Escola Municipal Jean Mermoz
-schoolC <- c(-46.633597,-23.605939)
-## EMEI PAULO ALVES, TTE.
-
-## Sample lat and lon
-
-sim_df2 <- data.frame(group = c(rep('A',40),rep('B',40),rep('C',40)))
-
-sim_df2$lat[1:40] <- rnorm(n=40,mean=schoolA[2],sd=.003)
-sim_df2$lon[1:40] <- rnorm(n=40,mean=schoolA[1],sd=.003)
-
-sim_df2$lat[41:80] <- rnorm(n=40,mean=schoolB[2],sd=.003)
-sim_df2$lon[41:80] <- rnorm(n=40,mean=schoolB[1],sd=.003)
-
-sim_df2$lat[81:120] <- rnorm(n=40,mean=schoolC[2],sd=.003)
-sim_df2$lon[81:120] <- rnorm(n=40,mean=schoolC[1],sd=.003)
-
-school_mat <- rbind(schoolA,schoolB,schoolC) %>% 
-  transform(group = c("SchoolA", "SchoolB", "SchoolC"))
-
-colnames(school_mat)[1:2] <- c("lat","lon")
-```
 
 Com `nearplace` é possível identificar o local (dado uma lista) mais
 próximo de um ponto.
 
-``` r
-nearplace(coords = sim_df2[,c("lon","lat")],
-          targets = school_mat,
-          target_label = "group")
-#>         1         2         3         4         5         6         7         8 
-#> "SchoolB" "SchoolB" "SchoolA" "SchoolA" "SchoolC" "SchoolB" "SchoolA" "SchoolA" 
-#>         9        10        11        12        13        14        15        16 
-#> "SchoolA" "SchoolA" "SchoolA" "SchoolA" "SchoolA" "SchoolA" "SchoolA" "SchoolA" 
-#>        17        18        19        20        21        22        23        24 
-#> "SchoolA" "SchoolA" "SchoolA" "SchoolA" "SchoolA" "SchoolA" "SchoolA" "SchoolA" 
-#>        25        26        27        28        29        30        31        32 
-#> "SchoolA" "SchoolA" "SchoolA" "SchoolA" "SchoolA" "SchoolA" "SchoolA" "SchoolA" 
-#>        33        34        35        36        37        38        39        40 
-#> "SchoolB" "SchoolA" "SchoolA" "SchoolA" "SchoolA" "SchoolA" "SchoolA" "SchoolA" 
-#>        41        42        43        44        45        46        47        48 
-#> "SchoolC" "SchoolA" "SchoolC" "SchoolB" "SchoolC" "SchoolC" "SchoolB" "SchoolC" 
-#>        49        50        51        52        53        54        55        56 
-#> "SchoolC" "SchoolB" "SchoolA" "SchoolA" "SchoolC" "SchoolB" "SchoolB" "SchoolC" 
-#>        57        58        59        60        61        62        63        64 
-#> "SchoolB" "SchoolB" "SchoolA" "SchoolC" "SchoolA" "SchoolB" "SchoolB" "SchoolB" 
-#>        65        66        67        68        69        70        71        72 
-#> "SchoolB" "SchoolB" "SchoolC" "SchoolA" "SchoolC" "SchoolB" "SchoolC" "SchoolB" 
-#>        73        74        75        76        77        78        79        80 
-#> "SchoolB" "SchoolB" "SchoolB" "SchoolB" "SchoolC" "SchoolC" "SchoolA" "SchoolB" 
-#>        81        82        83        84        85        86        87        88 
-#> "SchoolC" "SchoolC" "SchoolC" "SchoolC" "SchoolC" "SchoolC" "SchoolC" "SchoolC" 
-#>        89        90        91        92        93        94        95        96 
-#> "SchoolC" "SchoolC" "SchoolC" "SchoolC" "SchoolB" "SchoolC" "SchoolC" "SchoolC" 
-#>        97        98        99       100       101       102       103       104 
-#> "SchoolC" "SchoolB" "SchoolC" "SchoolC" "SchoolB" "SchoolB" "SchoolC" "SchoolC" 
-#>       105       106       107       108       109       110       111       112 
-#> "SchoolC" "SchoolC" "SchoolB" "SchoolC" "SchoolC" "SchoolC" "SchoolC" "SchoolB" 
-#>       113       114       115       116       117       118       119       120 
-#> "SchoolB" "SchoolC" "SchoolB" "SchoolC" "SchoolC" "SchoolC" "SchoolC" "SchoolC"
-```
-
 `min_dist` retorna a menor distância entre um ponto e um conjunto de
 localidades.
 
+# Caso de identificacao do setor censitario
+
+Ler shapes
+
 ``` r
-# Min. Distance
-min_dists <- min_dist(coords = sim_df2[,c("lon","lat")],
-         targets = school_mat)
+mun <- brazilmaps::get_brmap("City")
+
+cens <- sf::st_read("inst/extdata/setor censitario", "DEINFO_SETOR_CENSITARIO_2010") %>%
+  sf::st_transform("+proj=longlat +zone=23 +south +ellps=aust_SA +units=m +no_defs") %>%
+  sf::st_as_sf()
+#> Reading layer `DEINFO_SETOR_CENSITARIO_2010' from data source 
+#>   `C:\Users\tomas.barcellos\Documents\projetos\milton-geo\inst\extdata\setor censitario' 
+#>   using driver `ESRI Shapefile'
+#> Simple feature collection with 18953 features and 5 fields
+#> Geometry type: MULTIPOLYGON
+#> Dimension:     XY
+#> Bounding box:  xmin: 313434.5 ymin: 7343753 xmax: 360659.3 ymax: 7416233
+#> Projected CRS: SAD69 / UTM zone 23S
 ```
+
+Identicar o setor censitario e municipio de um endereco.
+
+``` r
+coord <- get_addr("Rua vergueiro")
+
+sp <- geopart(coord, mun)
+#> old-style crs object detected; please recreate object with a recent sf::st_crs()
+#> old-style crs object detected; please recreate object with a recent sf::st_crs()
+setor <- geopart(coord, cens)
+```
+
+E fazer um mapa.
+
+``` r
+library(ggplot2)
+
+ggplot(sp) +
+  geom_sf(fill = "gray99") +
+  geom_sf(data = setor, col = "darkblue", fill = "darkblue") +
+  coord_sf(ylim = c(-23.4, -23.6), ) +
+  theme_void()
+```
+
+<img src="man/figures/README-unnamed-chunk-8-1.png" width="100%" />
