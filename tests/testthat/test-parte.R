@@ -26,15 +26,21 @@ test_that("Identificar ponto em poligono", {
   res2 <- geopart(coord, mun)
   expect_equal(as.character(res2$nome), "FLORIANÓPOLIS")
 
-  coord2 <- get_addr("Rua vergueiro")
-  res3 <- geopart(coord2, mun)
-  expect_equal(as.character(res3$nome), "SÃO PAULO")
-
   res4 <- geopart(coord, cens)
   # Fora de SP
   expect_equal(nrow(res4), 0L)
 
+  coord2 <- get_addr("Rua vergueiro")
+  res3 <- geopart(coord2, mun)
+  expect_equal(as.character(res3$nome), "SÃO PAULO")
+
   res5 <- geopart(coord2, cens)
   expect_equal(res5$ID, 14465)
+
+  # Mesma resposta usando o CEP
+  coord3 <- get_addr(milton:::cep("01504-000"))
+  res5_cep <- geopart(coord3, cens)
+
+  expect_identical(res5, res5_cep)
 })
 
