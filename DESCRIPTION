@@ -20,6 +20,7 @@ Imports:
 URL: https://tomasbarcellos.github.io/milton
 Suggests: 
     testthat (>= 3.0.0),
-    covr,
-    brazilmaps
+    covr
+Remotes:
+    rpradosiqueira/brazilmaps
 Config/testthat/edition: 3
