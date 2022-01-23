@@ -5,12 +5,15 @@ w <- get_addr("Porto Alegre")
 
 X <- rbind(x, y, z, w)
 
-estados <- brazilmaps::get_brmap("Region")
-mun <- brazilmaps::get_brmap("City")
+# regioes <- brazilmaps::get_brmap("Region")
+# mun <- brazilmaps::get_brmap("City")
+regioes <- readRDS("regioes.rds")
+mun <- readRDS("mun.rds")
+
 
 test_that("Identificar ponto em poligono", {
   # Cidades estao nas regioes corretas
-  resp <- geopart(X, estados)
+  resp <- geopart(X, regioes)
   gabarito <- c("CENTRO-OESTE", "NORDESTE", "CENTRO-OESTE", "SUL")
   expect_equal(as.character(resp$desc_rg), gabarito)
 
