@@ -1,0 +1,143 @@
+---
+title: "Tutorial"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Tutorial}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE, message = FALSE, warning = FALSE,
+  comment = "#>"
+)
+```
+
+Esta vinheta descreve as funcionalidades básicas do pacote e mostra 
+como ele pode ser usado para georreferenciar seus dados.
+
+```{r setup}
+library(milton)
+```
+
+# Georreferenciando endereços
+
+O pacote permite que você georrefenrencie seus dados com:
+
+1. Endereço
+2. CEP
+
+```{r}
+av <- get_addr("Avenida pequeno príncipe")
+av
+# CEP da avenida pequeno principe
+get_addr("88063-000")
+```
+
+Carregando funções de utilidade para ler e manipular dados
+
+```{r}
+library(tidyverse)
+```
+
+Também é possível identificar o município e o setor censitário de um endereço:
+
+```{r include=FALSE}
+mun <- geobr::read_municipality(year = 2018) %>% 
+  rename(geometry = geom)
+```
+
+
+```{r, eval = FALSE}
+mun <- geobr::read_municipality(year = 2018) %>% 
+  rename(geometry = geom)
+```
+
+
+```{r}
+geo_av <- geopart(av, mun)
+ggplot(geo_av) +
+  geom_sf() +
+  theme_void()
+```
+
+```{r}
+geo_cast <- get_addr("Estádio Arena Castelão") %>% 
+  geopart(mun)
+
+ggplot(geo_cast) +
+  geom_sf() +
+  theme_void()
+```
+
+Para a identificação do setor censitário também é possível usar a mesma função.
+Para tanto deve-se usar como segundo argumento os polígonos dos setores 
+censitários. Uma forma fácil de acessar esses polígonos é usando o pacote
+`geobr`: `geobr::read_census_tract`. 
+
+```{r, include = FALSE}
+setores <- geobr::read_census_tract(3550308) %>% 
+  rename(geometry = geom)
+```
+
+```{r, eval = FALSE}
+setores <- geobr::read_census_tract(3550308) %>% 
+  rename(geometry = geom)
+```
+
+Com estes polígonos em maos é possível identificara o setor censitário ao qual 
+determinado endereço pertence.
+
+```{r}
+epm <- get_addr("Rua botucatu, 740")
+geo_epm <- geopart(epm, setores)
+ggplot(geo_epm) +
+  geom_sf() +
+  theme_void()
+```
+
+Outra funcionalidade do pacote permite relacionar endereços distintos
+
+```{r}
+pacientes <- tibble(
+  paciente = LETTERS[1:3],
+  endereco = c(
+    "Av. Dr. Altino Arantes, 941",
+    "Rua Gandavo, 349, São Paulo",
+    "Rua Bela cruz, 40"
+  )
+) %>% 
+  mutate(latlon = map(endereco, get_addr))
+
+```
+
+E agora é possível calcular a distância entre esses pontos e a Escola Paulista 
+de Medicina
+
+```{r}
+pacientes %>% 
+  mutate(distancia_km = map_dbl(latlon, distancia, y = epm))
+```
+
+Há um conjunto de funções que permite identificar, por exemplo, o local mais 
+adequado para tratar determinado paciente. `min_dist` retorna a menor distância.
+
+```{r}
+paciente_C <- pacientes$latlon[[3]]
+hospitais <- map_df(c("Hospital São Paulo", 
+                      "Hospital Dom Alvarenga",
+                      "Hospital Paulistano"), 
+                    get_addr)
+min_dist(paciente_C, hospitais)
+distancia(paciente_C, hospitais)
+```
+
+Enquanto `nearplace` retorna o local mais próximo
+
+
+```{r}
+prox <- nearplace(paciente_C, hospitais)
+idx <- prox$lon == hospitais$lon
+c("Hospital São Paulo", "Hospital Dom Alvarenga", "Hospital Paulistano")[idx]
+```
