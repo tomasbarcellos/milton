@@ -6,8 +6,9 @@
 #' @return Distancia entre x e y
 #' @export
 distancia <- function(x, y) {
-  sp::spDists(as.matrix(x), as.matrix(y), TRUE) %>%
-    remove_zero()
+  sf::st_distance(x, y) %>%
+    units::set_units(km) %>%
+    units::drop_units()
 }
 
 ##' min_dist
@@ -24,12 +25,3 @@ min_dist <- function(coords, targets){
     apply(1, min, na.rm = TRUE)
 }
 
-#' Remove distancias a si mesmo das matrizes
-#'
-#' @param X Matriz
-#'
-#' @return Matriz sem zeros
-remove_zero <- function(X) {
-  X[X == 0] <- NA
-  X
-}

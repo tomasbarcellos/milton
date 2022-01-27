@@ -3,6 +3,11 @@ y <- get_addr("Fortaleza")
 z <- get_addr("Goiania")
 w <- get_addr("Porto Alegre")
 
+test_that("distancia retorna um numero positivo", {
+  expect_type(distancia(x, y), "double")
+  expect_true(distancia(x, y) > 0)
+})
+
 test_that("Calcula distancia ponto-ponto", {
   d <- distancia(x, y)
 
@@ -12,7 +17,7 @@ test_that("Calcula distancia ponto-ponto", {
 })
 
 test_that("Calcula distancia ponto-vetor", {
-  Y <- rbind(y, z, w)
+  Y <- c(y, z, w)
 
   d <- distancia(x, Y)
   # Dependendo de onde pega o ponto pode ser um pouco mais ou menos
@@ -24,7 +29,7 @@ test_that("Calcula distancia ponto-vetor", {
 
 
 test_that("Calcula distancia vetor-ponto", {
-  X <- rbind(x, z, w)
+  X <- c(x, z, w)
 
   d <- distancia(X, y)
   # Dependendo de onde pega o ponto pode ser um pouco mais ou menos
@@ -36,8 +41,8 @@ test_that("Calcula distancia vetor-ponto", {
 
 
 test_that("Calcula distancia vetor-vetor", {
-  X <- rbind(x, z)
-  Y <- rbind(y, w)
+  X <- c(x, z)
+  Y <- c(y, w)
 
   d <- distancia(X, Y)
   # Dependendo de onde pega o ponto pode ser um pouco mais ou menos
@@ -50,31 +55,30 @@ test_that("Calcula distancia vetor-vetor", {
 
 
 test_that("Retorna menor distancia entre X e Y", {
-  X <- rbind(x, y, z, w)
-  Y <- rbind(x, y, z, w)
+  X <- c(x, z)
+  Y <- c(y, w)
 
   d <- min_dist(X, Y)
 
-  # menor distancia entre capitais eh brasilia <-> goiania: +- 175
-  expect_true(min(d) > 165 & min(d) < 185)
+  # menor distancia entre capitais eh goiania <-> porto alegre: +- 1500
+  expect_true(min(d) > 1490 & min(d) < 1510)
 
-  expect_true(d[1] > 165 & d[1] < 185) # bsb - goiania
-  expect_true(d[2] > 1680 & d[2] < 1700) # bsb - fortaleza
-  expect_true(d[3] > 165 & d[3] < 185) # goiania - bsb
-  expect_true(d[4] > 1490 & d[4] < 1510) # goiania - porto alegre
+  expect_true(d[1] > 1610 & d[1] < 1630) # bsb - porto alegre
+  expect_true(d[2] > 1490 & d[2] < 1510) # goiania - porto alegre
 })
 
 test_that("Local mais proximo", {
-  X <- rbind(x, y, z, w)
-  Y <- rbind(x, y, z, w)
+  X <- c(x, z)
+  Y <- c(y, w)
 
-  resp <- tibble::tibble(
-    lon = c(-49.2532691, -47.8823172, -47.8823172, -49.2532691),
-    lat = c(-16.680882, -15.7934036, -15.7934036, -16.680882)
+  resp <- sf::st_sfc(
+    sf::st_point(c(-51.2303767, -30.0324999)),
+    sf::st_point(c(-51.2303767, -30.0324999)),
+    crs = 4326
   )
 
   # primeiro caso
-  expect_equal(nearplace(x, Y), resp[1, ])
+  expect_equal(nearplace(x, Y), resp[1])
   expect_equal(nearplace(X, Y), resp)
 
 

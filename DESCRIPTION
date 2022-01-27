@@ -16,7 +16,8 @@ Imports:
     tibble,
     httr,
     rvest,
-    sf
+    sf,
+    units
 URL: https://tomasbarcellos.github.io/milton
 Suggests: 
     testthat (>= 3.0.0),

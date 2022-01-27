@@ -10,7 +10,7 @@
 nearplace <- function(coords, targets){
   dists <- distancia(coords, targets)
 
-  idx <- apply(dists, 1, function(x) which(x == min(x, na.rm = TRUE)))
+  idx <- apply(dists, 1, which.min)
 
-  targets[idx, ]
+  targets[idx]
 }
