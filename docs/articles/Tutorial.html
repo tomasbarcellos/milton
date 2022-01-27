@@ -96,16 +96,18 @@
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">av</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_addr.html">get_addr</a></span><span class="op">(</span><span class="st">"Avenida pequeno príncipe"</span><span class="op">)</span>
 <span class="va">av</span>
-<span class="co">#&gt; # A tibble: 1 x 2</span>
-<span class="co">#&gt;     lon   lat</span>
-<span class="co">#&gt;   &lt;dbl&gt; &lt;dbl&gt;</span>
-<span class="co">#&gt; 1 -48.5 -27.7</span>
+<span class="co">#&gt; Geometry set for 1 feature </span>
+<span class="co">#&gt; Geometry type: POINT</span>
+<span class="co">#&gt; Dimension:     XY</span>
+<span class="co">#&gt; Bounding box:  xmin: -48.4922 ymin: -27.68202 xmax: -48.4922 ymax: -27.68202</span>
+<span class="co">#&gt; Geodetic CRS:  SIRGAS 2000</span>
 <span class="co"># CEP da avenida pequeno principe</span>
 <span class="fu"><a href="../reference/get_addr.html">get_addr</a></span><span class="op">(</span><span class="st">"88063-000"</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 1 x 2</span>
-<span class="co">#&gt;     lon   lat</span>
-<span class="co">#&gt;   &lt;dbl&gt; &lt;dbl&gt;</span>
-<span class="co">#&gt; 1 -48.5 -27.7</span></code></pre></div>
+<span class="co">#&gt; Geometry set for 1 feature </span>
+<span class="co">#&gt; Geometry type: POINT</span>
+<span class="co">#&gt; Dimension:     XY</span>
+<span class="co">#&gt; Bounding box:  xmin: -48.49422 ymin: -27.6804 xmax: -48.49422 ymax: -27.6804</span>
+<span class="co">#&gt; Geodetic CRS:  SIRGAS 2000</span></code></pre></div>
 <p>Carregando funções de utilidade para ler e manipular dados</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span></code></pre></div>
@@ -115,17 +117,17 @@
   <span class="fu">rename</span><span class="op">(</span>geometry <span class="op">=</span> <span class="va">geom</span><span class="op">)</span></code></pre></div>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">geo_av</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/geopart.html">geopart</a></span><span class="op">(</span><span class="va">av</span>, <span class="va">mun</span><span class="op">)</span>
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">geo_av</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html">geom_sf</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_void</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<span class="fu">ggplot</span><span class="op">(</span><span class="va">mun</span><span class="op">[</span><span class="va">geo_av</span>, <span class="op">]</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">geom_sf</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">theme_void</span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p><img src="Tutorial_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">geo_cast</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_addr.html">get_addr</a></span><span class="op">(</span><span class="st">"Estádio Arena Castelão"</span><span class="op">)</span> <span class="op">%&gt;%</span> 
   <span class="fu"><a href="../reference/geopart.html">geopart</a></span><span class="op">(</span><span class="va">mun</span><span class="op">)</span>
 
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">geo_cast</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html">geom_sf</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_void</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<span class="fu">ggplot</span><span class="op">(</span><span class="va">mun</span><span class="op">[</span><span class="va">geo_cast</span>, <span class="op">]</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">geom_sf</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">theme_void</span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p><img src="Tutorial_files/figure-html/unnamed-chunk-7-1.png" width="700"></p>
 <p>Para a identificação do setor censitário também é possível usar a mesma função. Para tanto deve-se usar como segundo argumento os polígonos dos setores censitários. Uma forma fácil de acessar esses polígonos é usando o pacote <code>geobr</code>: <code><a href="https://rdrr.io/pkg/geobr/man/read_census_tract.html">geobr::read_census_tract</a></code>.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
@@ -135,9 +137,9 @@
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">epm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_addr.html">get_addr</a></span><span class="op">(</span><span class="st">"Rua botucatu, 740"</span><span class="op">)</span>
 <span class="va">geo_epm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/geopart.html">geopart</a></span><span class="op">(</span><span class="va">epm</span>, <span class="va">setores</span><span class="op">)</span>
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">geo_epm</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html">geom_sf</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_void</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<span class="fu">ggplot</span><span class="op">(</span><span class="va">setores</span><span class="op">[</span><span class="va">geo_epm</span>, <span class="op">]</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">geom_sf</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">theme_void</span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p><img src="Tutorial_files/figure-html/unnamed-chunk-10-1.png" width="700"></p>
 <p>Outra funcionalidade do pacote permite relacionar endereços distintos</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
@@ -155,28 +157,30 @@
 <code class="sourceCode R"><span class="va">pacientes</span> <span class="op">%&gt;%</span> 
   <span class="fu">mutate</span><span class="op">(</span>distancia_km <span class="op">=</span> <span class="fu">map_dbl</span><span class="op">(</span><span class="va">latlon</span>, <span class="va">distancia</span>, y <span class="op">=</span> <span class="va">epm</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 3 x 4</span>
-<span class="co">#&gt;   paciente endereco                    latlon           distancia_km</span>
-<span class="co">#&gt;   &lt;chr&gt;    &lt;chr&gt;                       &lt;list&gt;                  &lt;dbl&gt;</span>
-<span class="co">#&gt; 1 A        Av. Dr. Altino Arantes, 941 &lt;tibble [1 x 2]&gt;        0.752</span>
-<span class="co">#&gt; 2 B        Rua Gandavo, 349, São Paulo &lt;tibble [1 x 2]&gt;        0.824</span>
-<span class="co">#&gt; 3 C        Rua Bela cruz, 40           &lt;tibble [1 x 2]&gt;        6.82</span></code></pre></div>
+<span class="co">#&gt;   paciente endereco                    latlon            distancia_km</span>
+<span class="co">#&gt;   &lt;chr&gt;    &lt;chr&gt;                       &lt;list&gt;                   &lt;dbl&gt;</span>
+<span class="co">#&gt; 1 A        Av. Dr. Altino Arantes, 941 &lt;POINT (-46.6...&gt;        0.752</span>
+<span class="co">#&gt; 2 B        Rua Gandavo, 349, São Paulo &lt;POINT (-46.6...&gt;        0.827</span>
+<span class="co">#&gt; 3 C        Rua Bela cruz, 40           &lt;POINT (-46.5...&gt;        6.82</span></code></pre></div>
 <p>Há um conjunto de funções que permite identificar, por exemplo, o local mais adequado para tratar determinado paciente. <code>min_dist</code> retorna a menor distância.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">paciente_C</span> <span class="op">&lt;-</span> <span class="va">pacientes</span><span class="op">$</span><span class="va">latlon</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span>
-<span class="va">hospitais</span> <span class="op">&lt;-</span> <span class="fu">map_df</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Hospital São Paulo"</span>, 
-                      <span class="st">"Hospital Dom Alvarenga"</span>,
-                      <span class="st">"Hospital Paulistano"</span><span class="op">)</span>, 
-                    <span class="va">get_addr</span><span class="op">)</span>
-<span class="fu"><a href="../reference/min_dist.html">min_dist</a></span><span class="op">(</span><span class="va">paciente_C</span>, <span class="va">hospitais</span><span class="op">)</span>
-<span class="co">#&gt; [1] 3.570029</span>
-<span class="fu"><a href="../reference/distancia.html">distancia</a></span><span class="op">(</span><span class="va">paciente_C</span>, <span class="va">hospitais</span><span class="op">)</span>
-<span class="co">#&gt;          [,1]     [,2]     [,3]</span>
-<span class="co">#&gt; [1,] 6.809528 3.570029 6.432571</span></code></pre></div>
+<span class="va">hospitais</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Hospital São Paulo"</span>, 
+               <span class="st">"Hospital Dom Alvarenga"</span>,
+               <span class="st">"Hospital Paulistano"</span><span class="op">)</span>
+
+<span class="va">geo_hospitais</span> <span class="op">&lt;-</span> <span class="fu">map</span><span class="op">(</span><span class="va">hospitais</span>, <span class="va">get_addr</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">reduce</span><span class="op">(</span><span class="va">c</span><span class="op">)</span>
+<span class="fu"><a href="../reference/min_dist.html">min_dist</a></span><span class="op">(</span><span class="va">paciente_C</span>, <span class="va">geo_hospitais</span><span class="op">)</span>
+<span class="co">#&gt; [1] 3.571139</span>
+<span class="fu"><a href="../reference/distancia.html">distancia</a></span><span class="op">(</span><span class="va">paciente_C</span>, <span class="va">geo_hospitais</span><span class="op">)</span>
+<span class="co">#&gt;          [,1]     [,2]    [,3]</span>
+<span class="co">#&gt; [1,] 6.802523 3.571139 6.42353</span></code></pre></div>
 <p>Enquanto <code>nearplace</code> retorna o local mais próximo</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">prox</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/nearplace.html">nearplace</a></span><span class="op">(</span><span class="va">paciente_C</span>, <span class="va">hospitais</span><span class="op">)</span>
-<span class="va">idx</span> <span class="op">&lt;-</span> <span class="va">prox</span><span class="op">$</span><span class="va">lon</span> <span class="op">==</span> <span class="va">hospitais</span><span class="op">$</span><span class="va">lon</span>
-<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Hospital São Paulo"</span>, <span class="st">"Hospital Dom Alvarenga"</span>, <span class="st">"Hospital Paulistano"</span><span class="op">)</span><span class="op">[</span><span class="va">idx</span><span class="op">]</span>
+<code class="sourceCode R"><span class="va">prox</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/nearplace.html">nearplace</a></span><span class="op">(</span><span class="va">paciente_C</span>, <span class="va">geo_hospitais</span><span class="op">)</span>
+<span class="va">idx</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="va">prox</span> <span class="op">==</span> <span class="va">geo_hospitais</span><span class="op">)</span>
+<span class="va">hospitais</span><span class="op">[</span><span class="va">idx</span><span class="op">]</span>
 <span class="co">#&gt; [1] "Hospital Dom Alvarenga"</span></code></pre></div>
 </div>
   </div>

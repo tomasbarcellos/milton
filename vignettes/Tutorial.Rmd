@@ -57,7 +57,7 @@ mun <- geobr::read_municipality(year = 2018) %>%
 
 ```{r}
 geo_av <- geopart(av, mun)
-ggplot(geo_av) +
+ggplot(mun[geo_av, ]) +
   geom_sf() +
   theme_void()
 ```
@@ -66,7 +66,7 @@ ggplot(geo_av) +
 geo_cast <- get_addr("Estádio Arena Castelão") %>% 
   geopart(mun)
 
-ggplot(geo_cast) +
+ggplot(mun[geo_cast, ]) +
   geom_sf() +
   theme_void()
 ```
@@ -92,7 +92,7 @@ determinado endereço pertence.
 ```{r}
 epm <- get_addr("Rua botucatu, 740")
 geo_epm <- geopart(epm, setores)
-ggplot(geo_epm) +
+ggplot(setores[geo_epm, ]) +
   geom_sf() +
   theme_void()
 ```
@@ -125,19 +125,21 @@ adequado para tratar determinado paciente. `min_dist` retorna a menor distância
 
 ```{r}
 paciente_C <- pacientes$latlon[[3]]
-hospitais <- map_df(c("Hospital São Paulo", 
-                      "Hospital Dom Alvarenga",
-                      "Hospital Paulistano"), 
-                    get_addr)
-min_dist(paciente_C, hospitais)
-distancia(paciente_C, hospitais)
+hospitais <- c("Hospital São Paulo", 
+               "Hospital Dom Alvarenga",
+               "Hospital Paulistano")
+
+geo_hospitais <- map(hospitais, get_addr) %>% 
+  reduce(c)
+min_dist(paciente_C, geo_hospitais)
+distancia(paciente_C, geo_hospitais)
 ```
 
 Enquanto `nearplace` retorna o local mais próximo
 
 
 ```{r}
-prox <- nearplace(paciente_C, hospitais)
-idx <- prox$lon == hospitais$lon
-c("Hospital São Paulo", "Hospital Dom Alvarenga", "Hospital Paulistano")[idx]
+prox <- nearplace(paciente_C, geo_hospitais)
+idx <- which(prox == geo_hospitais)
+hospitais[idx]
 ```
