@@ -115,17 +115,17 @@
   <span class="fu">rename</span><span class="op">(</span>geometry <span class="op">=</span> <span class="va">geom</span><span class="op">)</span></code></pre></div>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">geo_av</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/geopart.html">geopart</a></span><span class="op">(</span><span class="va">av</span>, <span class="va">mun</span><span class="op">)</span>
-<span class="fu">ggplot</span><span class="op">(</span><span class="va">geo_av</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">geom_sf</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">theme_void</span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">geo_av</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html">geom_sf</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_void</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p><img src="Tutorial_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">geo_cast</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_addr.html">get_addr</a></span><span class="op">(</span><span class="st">"Estádio Arena Castelão"</span><span class="op">)</span> <span class="op">%&gt;%</span> 
   <span class="fu"><a href="../reference/geopart.html">geopart</a></span><span class="op">(</span><span class="va">mun</span><span class="op">)</span>
 
-<span class="fu">ggplot</span><span class="op">(</span><span class="va">geo_cast</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">geom_sf</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">theme_void</span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">geo_cast</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html">geom_sf</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_void</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p><img src="Tutorial_files/figure-html/unnamed-chunk-7-1.png" width="700"></p>
 <p>Para a identificação do setor censitário também é possível usar a mesma função. Para tanto deve-se usar como segundo argumento os polígonos dos setores censitários. Uma forma fácil de acessar esses polígonos é usando o pacote <code>geobr</code>: <code><a href="https://rdrr.io/pkg/geobr/man/read_census_tract.html">geobr::read_census_tract</a></code>.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
@@ -135,9 +135,9 @@
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">epm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_addr.html">get_addr</a></span><span class="op">(</span><span class="st">"Rua botucatu, 740"</span><span class="op">)</span>
 <span class="va">geo_epm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/geopart.html">geopart</a></span><span class="op">(</span><span class="va">epm</span>, <span class="va">setores</span><span class="op">)</span>
-<span class="fu">ggplot</span><span class="op">(</span><span class="va">geo_epm</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">geom_sf</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">theme_void</span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">geo_epm</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html">geom_sf</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_void</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p><img src="Tutorial_files/figure-html/unnamed-chunk-10-1.png" width="700"></p>
 <p>Outra funcionalidade do pacote permite relacionar endereços distintos</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
