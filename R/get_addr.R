@@ -12,8 +12,10 @@ get_addr <- function(address = NULL){
     return(get_addr(cep(address)))
   }
 
+  vazio <- sf::st_sfc(sf::st_point(), crs = 4326)
+
   if(suppressWarnings(is.null(address))) {
-    return(sf::st_point())
+    return(vazio)
   }
 
 
@@ -22,10 +24,14 @@ get_addr <- function(address = NULL){
     d <- jsonlite::fromJSON(
       glue::glue("http://nominatim.openstreetmap.org/search/",
                  "{address}?format=json&addressdetails=0&limit=1")
-    ), error = function(c) return(sf::st_point())
+    ), error = function(c) return(vazio)
   )
 
-  if(length(d) == 0) return(sf::st_point())
+  if(length(d) == 0) return(vazio)
 
-  sf::st_point(c(as.numeric(d$lon), as.numeric(d$lat)))
+  sf::st_sfc(
+    sf::st_point(c(as.numeric(d$lon), as.numeric(d$lat))),
+    crs = 4326
+  )
+
 }
