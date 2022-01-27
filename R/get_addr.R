@@ -12,20 +12,20 @@ get_addr <- function(address = NULL){
     return(get_addr(cep(address)))
   }
 
-  vazio <- tibble::tibble(lon = numeric(), lat = numeric())
-
   if(suppressWarnings(is.null(address))) {
-    return(vazio)
+    return(sf::st_point())
   }
 
 
+  address <- gsub("\\s+", "\\%20", address)
   tryCatch(
     d <- jsonlite::fromJSON(
-      gsub('\\@addr\\@', gsub('\\s+', '\\%20', address),
-           'http://nominatim.openstreetmap.org/search/@addr@?format=json&addressdetails=0&limit=1')
-    ), error = function(c) return(vazio())
+      glue::glue("http://nominatim.openstreetmap.org/search/",
+                 "{address}?format=json&addressdetails=0&limit=1")
+    ), error = function(c) return(sf::st_point())
   )
-  if(length(d) == 0) return(vazio)
 
-  tibble::tibble(lon = as.numeric(d$lon), lat = as.numeric(d$lat))
+  if(length(d) == 0) return(sf::st_point())
+
+  sf::st_point(c(as.numeric(d$lon), as.numeric(d$lat)))
 }
