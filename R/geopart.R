@@ -7,9 +7,6 @@
 #' @export
 #'
 geopart <- function(dataset, shape_file){
-  d <- lapply(seq_len(nrow(dataset)), function (i) sf::st_point(as.matrix(dataset[i, ])))
-
-  idx <- lapply(d, sf::st_within, y = shape_file$geometry) %>%
-    unlist()
-  shape_file[idx, ]
+  sf::st_within(dataset, shape_file, sparse = TRUE) %>%
+    purrr::map_int(~ifelse(length(.x) == 0, NA_integer_, .x))
 }
