@@ -24,7 +24,7 @@ test_that("Erros sao suaves", {
   # endereco inexistente/erro digitacao - com M e no lugar de N
   resp2 <- get_addr("Avemida pequeno principe")
   expect_length(resp2, 1)
-  expect_equal(resp2, sf::st_sfc(sf::st_point(), crs = 4326))
+  expect_equal(resp2, sf::st_sfc(sf::st_point(), crs = 4674))
   expect_true(sf::st_is_empty(resp2))
 
 })

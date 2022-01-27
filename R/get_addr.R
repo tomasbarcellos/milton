@@ -12,7 +12,7 @@ get_addr <- function(address = NULL){
     return(get_addr(cep(address)))
   }
 
-  vazio <- sf::st_sfc(sf::st_point(), crs = 4326)
+  vazio <- sf::st_sfc(sf::st_point(), crs = 4674)
 
   if(suppressWarnings(is.null(address))) {
     return(vazio)
@@ -31,7 +31,7 @@ get_addr <- function(address = NULL){
 
   sf::st_sfc(
     sf::st_point(c(as.numeric(d$lon), as.numeric(d$lat))),
-    crs = 4326
+    crs = 4674
   )
 
 }

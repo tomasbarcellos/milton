@@ -74,7 +74,7 @@ test_that("Local mais proximo", {
   resp <- sf::st_sfc(
     sf::st_point(c(-51.2303767, -30.0324999)),
     sf::st_point(c(-51.2303767, -30.0324999)),
-    crs = 4326
+    crs = 4674
   )
 
   # primeiro caso
