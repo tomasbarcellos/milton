@@ -18,7 +18,10 @@ Imports:
     rvest,
     sf,
     units,
-    geobr
+    geobr,
+    dplyr,
+    stringr,
+    janitor
 URL: https://tomasbarcellos.github.io/milton
 Suggests: 
     testthat (>= 3.0.0),
