@@ -10,9 +10,14 @@ X <- c(x, y, z, w)
 #   dplyr::filter(code_state %in% c(42, 35))
 # cens <- geobr::read_census_tract(3550308)
 
-regioes <- readRDS("regioes.rds")
-mun <- readRDS("mun.rds")
-cens <- readRDS("regioes.rds")
+regioes <- readRDS("regioes.rds") %>%
+  sf::st_transform(crs = 4674)
+
+mun <- readRDS("mun.rds") %>%
+  sf::st_transform(crs = 4674)
+
+cens <- readRDS("censo.rds") %>%
+  sf::st_transform(crs = 4674)
 
 test_that("Identificar ponto em poligono", {
   # Cidades estao nas regioes corretas
