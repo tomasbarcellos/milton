@@ -143,3 +143,164 @@ prox <- nearplace(paciente_C, geo_hospitais)
 idx <- which(prox == geo_hospitais)
 hospitais[idx]
 ```
+
+# Usando CEPs
+
+Tomemos um conjunto qualquer de CEPs.s
+
+```{r}
+df_ceps <- tibble(
+  cep = c("01215010", "01508010", "01519000", "01526010", "02180080", 
+          "02849170", "03347070", "03380150", "03590080", "03737230", 
+          "04011060", "04018000", "04050060", "04108001", "04111000",
+          "04233140", "04421150", "04433180", "04633030", "04813190",
+          "04853185", "05010000", "05409002", "05540020", "05790230",
+          "06000150", "07717170", "07858150", "07865115", "08062320", 
+          "08140000", "08142710", "08370220", "08421520", "08700000",
+          "08770130", "08790000", "08793030", "09911550")
+)
+```
+
+Assumamos que representam o endereço de pacientes e suas condições.
+
+```{r}
+set.seed(123)
+df_pacientes <- df_ceps %>% 
+  mutate(
+    id = seq_along(cep),
+    condicao = sample(c(0, 1), length(cep), replace = TRUE)
+  )
+
+```
+
+Agora usemos as funções do pacote para complementar nosso bando de dados com:
+
+1. Georreferenciamento dos pacientes
+2. Identificação do setor censitário em que os pacientes estão localizados
+3. Relacionamento com dados do IPVS do referido setor censitário
+4. Identificação do ponto mais próximo de cada paciente (dado uma lista)
+5. Cálculo da distância entre os pacitentes e o ponto definido em 4)
+6. Criar mapa dos pacientes (leaflet)
+
+
+## 1. Georreferenciamento dos pacientes
+```{r}
+geo_pacientes <- df_pacientes %>% 
+  mutate(endereco = map_chr(cep, milton:::cep),
+         ponto = map(endereco, get_addr))
+```
+
+
+2. Identificação do setor censitário em que os pacientes estão localizados
+
+```{r}
+setor_paciente <- geo_pacientes %>% 
+  mutate(idx = map_int(ponto, geopart, setores),
+         setor = setores$code_tract[idx])
+```
+
+3. Relacionamento com dados do IPVS do referido setor censitário
+
+Ler dados do Índice Paulista de Vulnerabilidade Social (IPVS).
+
+```{r}
+ler_ipvs <- function() {
+  td <- tempdir()
+  tf <- tempfile(tmpdir = td)
+  httr::GET("http://www.ipvs.seade.gov.br/view/zip/ipvs/BaseIPVS2010_csv.zip", 
+            httr::write_disk(tf))
+  unzip(tf, exdir = td)
+  dicionario <- readr::read_tsv(file.path(td, "IPVS_Dicionario.txt"), 
+                                  locale = readr::locale(encoding = "UCS-2LE")) %>% 
+    janitor::clean_names() %>% 
+    head(51) %>% 
+    dplyr::mutate(
+      descricao = descricao %>% 
+        stringr::str_remove("\\(.+\\)") %>% 
+        stringr::str_squish()
+    ) %>% 
+    unique()
+  ipvs <- readr::read_csv2(file.path(td, "BaseIPVS2010.csv")) %>% 
+    purrr::set_names(dicionario$descricao) %>% 
+    janitor::clean_names()
+  ipvs %>% 
+    dplyr::mutate(codigo_do_setor_censitario = as.character(codigo_do_setor_censitario ))
+}
+```
+
+```{r, include=FALSE}2
+# saveRDS(ipvs, "ipvs.rds")
+# ipvs <- readRDS("ipvs.rds")
+ipvs <- ler_ipvs() %>% 
+  select(setor = codigo_do_setor_censitario, 
+         idade_media_setor = idade_media_das_pessoas_responsaveis, 
+         p_renda_meio_sm_setor =  proporcao_de_domicilios_particulares_com_rendimento_nominal_mensal_de_ate_1_2_s_m,
+         p_alfabetizadas_setor = proporcao_de_pessoas_responsaveis_alfabetizadas)
+```
+
+```{r, eval=FALSE}
+ipvs <- ler_ipvs() %>% 
+  select(setor = codigo_do_setor_censitario, 
+         idade_media_setor = idade_media_das_pessoas_responsaveis, 
+         p_renda_meio_sm_setor =  proporcao_de_domicilios_particulares_com_rendimento_nominal_mensal_de_ate_1_2_s_m,
+         p_alfabetizadas_setor = proporcao_de_pessoas_responsaveis_alfabetizadas)
+```
+
+Relacionar com dados dos pacientes
+
+```{r}
+paciente_ipvs <- setor_paciente %>% 
+  left_join(ipvs, by = "setor")
+paciente_ipvs
+```
+
+
+4. Identificação do ponto mais próximo de cada paciente (dado uma lista)
+
+Dados dois pontos, identificar o mais próximo de cada paciente.
+
+```{r}
+ps <- c(get_addr("04017-030"), get_addr("Hospital Albert Einstein"))
+nomes_ps <- c("Caism Vila Mariana", "Einstein")
+
+paciente_ipvs %>% 
+  head(9) %>%
+  select(id, condicao, cep, endereco, ponto) %>% 
+  mutate(ponto = reduce(ponto, c),
+         prox = nomes_ps[map(nearplace(ponto, ps), sf::st_equals, ps) %>% unlist()])
+```
+
+
+5. Cálculo da distância entre os pacitentes e o ponto definido em 4)
+
+```{r}
+paciente_ipvs %>% 
+  head(9) %>%
+  select(id, condicao, cep, endereco, ponto) %>% 
+  mutate(ponto = reduce(ponto, c),
+         # Em quilometros
+         distancias = distancia(ponto, ps))
+```
+
+6. Criar mapa dos pacientes (leaflet)
+
+```{r}
+library(leaflet)
+lat_ps <- unlist(ps[[1]])[2]
+lon_ps <- unlist(ps[[1]])[1]
+
+paciente_ipvs %>% 
+  head(9) %>% 
+  mutate(lon = map_dbl(ponto, ~unlist(.x)[1]),
+         lat= map_dbl(ponto, ~unlist(.x)[2])) %>% 
+  leaflet() %>%
+  addTiles() %>%  # Add default OpenStreetMap map tiles
+  addCircleMarkers(~lon, ~lat, label = ~cep, color = ~ifelse(condicao == 1, "red", "blue")) %>% 
+  addMarkers(lon_ps, lat_ps, label = "Caism Vila Mariana") %>% 
+  addLegend(colors = c("red", "blue"), labels = c("Com condição", "Sem condição"))
+```
+
+
+
+
+

@@ -7,12 +7,15 @@
 #' @importFrom magrittr %>%
 #'
 cep <- function(x) {
-  httr::POST("https://www.achecep.com.br/",
+  texto <- httr::POST("https://www.achecep.com.br/",
                      body = list(q = x),
                      encode = "form") %>%
     httr::content() %>%
     rvest::html_node(".verbeteEndereco") %>%
     rvest::html_children() %>%
-    rvest::html_text() %>%
-    magrittr::extract2(1)
+    rvest::html_text()
+
+  if (length(texto) == 0) return(NA)
+
+  texto[[1]]
 }
