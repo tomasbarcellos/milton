@@ -2,22 +2,25 @@
 #'
 #' @return Uma tibble
 #' @export
+#' importFrom("utils", "head", "unzip")
 ler_ipvs <- function() {
   td <- tempdir()
   tf <- tempfile(tmpdir = td)
   httr::GET("http://www.ipvs.seade.gov.br/view/zip/ipvs/BaseIPVS2010_csv.zip",
             httr::write_disk(tf))
-  unzip(tf, exdir = td)
+  utils::unzip(tf, exdir = td)
+
   dicionario <- readr::read_tsv(file.path(td, "IPVS_Dicionario.txt"),
                                 locale = readr::locale(encoding = "UCS-2LE")) %>%
     janitor::clean_names() %>%
-    head(51) %>%
+    utils::head(51) %>%
     dplyr::mutate(
       descricao = descricao %>%
         stringr::str_remove("\\(.+\\)") %>%
         stringr::str_squish()
     ) %>%
     unique()
+
   ipvs <- readr::read_csv2(file.path(td, "BaseIPVS2010.csv")) %>%
     purrr::set_names(dicionario$descricao) %>%
     janitor::clean_names()

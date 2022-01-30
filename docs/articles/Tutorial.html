@@ -218,55 +218,34 @@
 <li>Cálculo da distância entre os pacitentes e o ponto definido em 4)</li>
 <li>Criar mapa dos pacientes (leaflet)</li>
 </ol>
-<div id="georreferenciamento-dos-pacientes" class="section level2">
-<h2 class="hasAnchor">
-<a href="#georreferenciamento-dos-pacientes" class="anchor"></a>1. Georreferenciamento dos pacientes</h2>
+<div id="georreferenciamento-dos-pacientes" class="section level3">
+<h3 class="hasAnchor">
+<a href="#georreferenciamento-dos-pacientes" class="anchor"></a>1. Georreferenciamento dos pacientes</h3>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">geo_pacientes</span> <span class="op">&lt;-</span> <span class="va">df_pacientes</span> <span class="op">%&gt;%</span> 
   <span class="fu">mutate</span><span class="op">(</span>endereco <span class="op">=</span> <span class="fu">map_chr</span><span class="op">(</span><span class="va">cep</span>, <span class="fu">milton</span><span class="fu">:::</span><span class="va"><a href="../reference/cep.html">cep</a></span><span class="op">)</span>,
          ponto <span class="op">=</span> <span class="fu">map</span><span class="op">(</span><span class="va">endereco</span>, <span class="va">get_addr</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<ol start="2" style="list-style-type: decimal">
-<li>Identificação do setor censitário em que os pacientes estão localizados</li>
-</ol>
+</div>
+<div id="identificação-do-setor-censitário-em-que-os-pacientes-estão-localizados" class="section level3">
+<h3 class="hasAnchor">
+<a href="#identifica%C3%A7%C3%A3o-do-setor-censit%C3%A1rio-em-que-os-pacientes-est%C3%A3o-localizados" class="anchor"></a>2. Identificação do setor censitário em que os pacientes estão localizados</h3>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">setor_paciente</span> <span class="op">&lt;-</span> <span class="va">geo_pacientes</span> <span class="op">%&gt;%</span> 
   <span class="fu">mutate</span><span class="op">(</span>idx <span class="op">=</span> <span class="fu">map_int</span><span class="op">(</span><span class="va">ponto</span>, <span class="va">geopart</span>, <span class="va">setores</span><span class="op">)</span>,
          setor <span class="op">=</span> <span class="va">setores</span><span class="op">$</span><span class="va">code_tract</span><span class="op">[</span><span class="va">idx</span><span class="op">]</span><span class="op">)</span></code></pre></div>
-<ol start="3" style="list-style-type: decimal">
-<li>Relacionamento com dados do IPVS do referido setor censitário</li>
-</ol>
+</div>
+<div id="relacionamento-com-dados-do-ipvs-do-referido-setor-censitário" class="section level3">
+<h3 class="hasAnchor">
+<a href="#relacionamento-com-dados-do-ipvs-do-referido-setor-censit%C3%A1rio" class="anchor"></a>3. Relacionamento com dados do IPVS do referido setor censitário</h3>
 <p>Ler dados do Índice Paulista de Vulnerabilidade Social (IPVS).</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">ler_ipvs</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="op">{</span>
-  <span class="va">td</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html">tempdir</a></span><span class="op">(</span><span class="op">)</span>
-  <span class="va">tf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html">tempfile</a></span><span class="op">(</span>tmpdir <span class="op">=</span> <span class="va">td</span><span class="op">)</span>
-  <span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/GET.html">GET</a></span><span class="op">(</span><span class="st">"http://www.ipvs.seade.gov.br/view/zip/ipvs/BaseIPVS2010_csv.zip"</span>, 
-            <span class="fu">httr</span><span class="fu">::</span><span class="fu"><a href="https://httr.r-lib.org/reference/write_disk.html">write_disk</a></span><span class="op">(</span><span class="va">tf</span><span class="op">)</span><span class="op">)</span>
-  <span class="fu"><a href="https://rdrr.io/r/utils/unzip.html">unzip</a></span><span class="op">(</span><span class="va">tf</span>, exdir <span class="op">=</span> <span class="va">td</span><span class="op">)</span>
-  <span class="va">dicionario</span> <span class="op">&lt;-</span> <span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html">read_tsv</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">td</span>, <span class="st">"IPVS_Dicionario.txt"</span><span class="op">)</span>, 
-                                  locale <span class="op">=</span> <span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/locale.html">locale</a></span><span class="op">(</span>encoding <span class="op">=</span> <span class="st">"UCS-2LE"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-    <span class="fu">janitor</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/janitor/man/clean_names.html">clean_names</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-    <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">51</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>
-      descricao <span class="op">=</span> <span class="va">descricao</span> <span class="op">%&gt;%</span> 
-        <span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_remove.html">str_remove</a></span><span class="op">(</span><span class="st">"\\(.+\\)"</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-        <span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_trim.html">str_squish</a></span><span class="op">(</span><span class="op">)</span>
-    <span class="op">)</span> <span class="op">%&gt;%</span> 
-    <span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="op">)</span>
-  <span class="va">ipvs</span> <span class="op">&lt;-</span> <span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html">read_csv2</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">td</span>, <span class="st">"BaseIPVS2010.csv"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-    <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/set_names.html">set_names</a></span><span class="op">(</span><span class="va">dicionario</span><span class="op">$</span><span class="va">descricao</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-    <span class="fu">janitor</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/janitor/man/clean_names.html">clean_names</a></span><span class="op">(</span><span class="op">)</span>
-  <span class="va">ipvs</span> <span class="op">%&gt;%</span> 
-    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>codigo_do_setor_censitario <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span><span class="op">(</span><span class="va">codigo_do_setor_censitario</span> <span class="op">)</span><span class="op">)</span>
-<span class="op">}</span></code></pre></div>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">ipvs</span> <span class="op">&lt;-</span> <span class="fu">ler_ipvs</span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+<code class="sourceCode R"><span class="va">ipvs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ler_ipvs.html">ler_ipvs</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> 
   <span class="fu">select</span><span class="op">(</span>setor <span class="op">=</span> <span class="va">codigo_do_setor_censitario</span>, 
          idade_media_setor <span class="op">=</span> <span class="va">idade_media_das_pessoas_responsaveis</span>, 
          p_renda_meio_sm_setor <span class="op">=</span>  <span class="va">proporcao_de_domicilios_particulares_com_rendimento_nominal_mensal_de_ate_1_2_s_m</span>,
          p_alfabetizadas_setor <span class="op">=</span> <span class="va">proporcao_de_pessoas_responsaveis_alfabetizadas</span><span class="op">)</span></code></pre></div>
 <p>Relacionar com dados dos pacientes</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">paciente_ipvs</span> <span class="op">&lt;-</span> <span class="va">setor_paciente</span> <span class="op">%&gt;%</span> 
   <span class="fu">left_join</span><span class="op">(</span><span class="va">ipvs</span>, by <span class="op">=</span> <span class="st">"setor"</span><span class="op">)</span>
 <span class="va">paciente_ipvs</span>
@@ -285,11 +264,12 @@
 <span class="co">#&gt; 10 03737230    10        0 Rua Conceição~ &lt;POINT ~    NA &lt;NA&gt;               NA  </span>
 <span class="co">#&gt; # ... with 29 more rows, and 2 more variables: p_renda_meio_sm_setor &lt;dbl&gt;,</span>
 <span class="co">#&gt; #   p_alfabetizadas_setor &lt;dbl&gt;</span></code></pre></div>
-<ol start="4" style="list-style-type: decimal">
-<li>Identificação do ponto mais próximo de cada paciente (dado uma lista)</li>
-</ol>
+</div>
+<div id="identificação-do-ponto-mais-próximo-de-cada-paciente-dado-uma-lista" class="section level3">
+<h3 class="hasAnchor">
+<a href="#identifica%C3%A7%C3%A3o-do-ponto-mais-pr%C3%B3ximo-de-cada-paciente-dado-uma-lista" class="anchor"></a>4. Identificação do ponto mais próximo de cada paciente (dado uma lista)</h3>
 <p>Dados dois pontos, identificar o mais próximo de cada paciente.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">ps</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fu"><a href="../reference/get_addr.html">get_addr</a></span><span class="op">(</span><span class="st">"04017-030"</span><span class="op">)</span>, <span class="fu"><a href="../reference/get_addr.html">get_addr</a></span><span class="op">(</span><span class="st">"Hospital Albert Einstein"</span><span class="op">)</span><span class="op">)</span>
 <span class="va">nomes_ps</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Caism Vila Mariana"</span>, <span class="st">"Einstein"</span><span class="op">)</span>
 
@@ -310,10 +290,11 @@
 <span class="co">#&gt; 7     7        1 03347070 Rua Maestro Artur Eli~  (-46.5665 -23.56242) Caism Vi~</span>
 <span class="co">#&gt; 8     8        1 03380150 Rua Cruzeiro dos Peix~ (-46.53379 -23.57575) Caism Vi~</span>
 <span class="co">#&gt; 9     9        0 03590080 Rua Padre Manuel Barr~ (-46.48273 -23.54557) Caism Vi~</span></code></pre></div>
-<ol start="5" style="list-style-type: decimal">
-<li>Cálculo da distância entre os pacitentes e o ponto definido em 4)</li>
-</ol>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+</div>
+<div id="cálculo-da-distância-entre-os-pacitentes-e-o-ponto-definido-em-4" class="section level3">
+<h3 class="hasAnchor">
+<a href="#c%C3%A1lculo-da-dist%C3%A2ncia-entre-os-pacitentes-e-o-ponto-definido-em-4" class="anchor"></a>5. Cálculo da distância entre os pacitentes e o ponto definido em 4)</h3>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">paciente_ipvs</span> <span class="op">%&gt;%</span> 
   <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">9</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">select</span><span class="op">(</span><span class="va">id</span>, <span class="va">condicao</span>, <span class="va">cep</span>, <span class="va">endereco</span>, <span class="va">ponto</span><span class="op">)</span> <span class="op">%&gt;%</span> 
@@ -332,10 +313,11 @@
 <span class="co">#&gt; 7     7        1 03347070 Rua Maestr~  (-46.5665 -23.56242)           7.81  8.07</span>
 <span class="co">#&gt; 8     8        1 03380150 Rua Cruzei~ (-46.53379 -23.57575)          10.7  10.9 </span>
 <span class="co">#&gt; 9     9        0 03590080 Rua Padre ~ (-46.48273 -23.54557)          16.5  16.7</span></code></pre></div>
-<ol start="6" style="list-style-type: decimal">
-<li>Criar mapa dos pacientes (leaflet)</li>
-</ol>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+</div>
+<div id="criar-mapa-dos-pacientes-leaflet" class="section level3">
+<h3 class="hasAnchor">
+<a href="#criar-mapa-dos-pacientes-leaflet" class="anchor"></a>6. Criar mapa dos pacientes (leaflet)</h3>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://rstudio.github.io/leaflet/">leaflet</a></span><span class="op">)</span>
 <span class="va">lat_ps</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span><span class="op">(</span><span class="va">ps</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>
 <span class="va">lon_ps</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span><span class="op">(</span><span class="va">ps</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>
@@ -343,7 +325,7 @@
 <span class="va">paciente_ipvs</span> <span class="op">%&gt;%</span> 
   <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">9</span><span class="op">)</span> <span class="op">%&gt;%</span> 
   <span class="fu">mutate</span><span class="op">(</span>lon <span class="op">=</span> <span class="fu">map_dbl</span><span class="op">(</span><span class="va">ponto</span>, <span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span><span class="op">(</span><span class="va">.x</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span>,
-         lat<span class="op">=</span> <span class="fu">map_dbl</span><span class="op">(</span><span class="va">ponto</span>, <span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span><span class="op">(</span><span class="va">.x</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+         lat <span class="op">=</span> <span class="fu">map_dbl</span><span class="op">(</span><span class="va">ponto</span>, <span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span><span class="op">(</span><span class="va">.x</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
   <span class="fu"><a href="https://rdrr.io/pkg/leaflet/man/leaflet.html">leaflet</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/pkg/leaflet/man/map-layers.html">addTiles</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>  <span class="co"># Add default OpenStreetMap map tiles</span>
   <span class="fu"><a href="https://rdrr.io/pkg/leaflet/man/map-layers.html">addCircleMarkers</a></span><span class="op">(</span><span class="op">~</span><span class="va">lon</span>, <span class="op">~</span><span class="va">lat</span>, label <span class="op">=</span> <span class="op">~</span><span class="va">cep</span>, color <span class="op">=</span> <span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">condicao</span> <span class="op">==</span> <span class="fl">1</span>, <span class="st">"red"</span>, <span class="st">"blue"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 

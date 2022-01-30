@@ -183,7 +183,8 @@ Agora usemos as funções do pacote para complementar nosso bando de dados com:
 6. Criar mapa dos pacientes (leaflet)
 
 
-## 1. Georreferenciamento dos pacientes
+### 1. Georreferenciamento dos pacientes
+
 ```{r}
 geo_pacientes <- df_pacientes %>% 
   mutate(endereco = map_chr(cep, milton:::cep),
@@ -191,7 +192,7 @@ geo_pacientes <- df_pacientes %>%
 ```
 
 
-2. Identificação do setor censitário em que os pacientes estão localizados
+### 2. Identificação do setor censitário em que os pacientes estão localizados
 
 ```{r}
 setor_paciente <- geo_pacientes %>% 
@@ -199,38 +200,11 @@ setor_paciente <- geo_pacientes %>%
          setor = setores$code_tract[idx])
 ```
 
-3. Relacionamento com dados do IPVS do referido setor censitário
+### 3. Relacionamento com dados do IPVS do referido setor censitário
 
 Ler dados do Índice Paulista de Vulnerabilidade Social (IPVS).
 
-```{r}
-ler_ipvs <- function() {
-  td <- tempdir()
-  tf <- tempfile(tmpdir = td)
-  httr::GET("http://www.ipvs.seade.gov.br/view/zip/ipvs/BaseIPVS2010_csv.zip", 
-            httr::write_disk(tf))
-  unzip(tf, exdir = td)
-  dicionario <- readr::read_tsv(file.path(td, "IPVS_Dicionario.txt"), 
-                                  locale = readr::locale(encoding = "UCS-2LE")) %>% 
-    janitor::clean_names() %>% 
-    head(51) %>% 
-    dplyr::mutate(
-      descricao = descricao %>% 
-        stringr::str_remove("\\(.+\\)") %>% 
-        stringr::str_squish()
-    ) %>% 
-    unique()
-  ipvs <- readr::read_csv2(file.path(td, "BaseIPVS2010.csv")) %>% 
-    purrr::set_names(dicionario$descricao) %>% 
-    janitor::clean_names()
-  ipvs %>% 
-    dplyr::mutate(codigo_do_setor_censitario = as.character(codigo_do_setor_censitario ))
-}
-```
-
-```{r, include=FALSE}2
-# saveRDS(ipvs, "ipvs.rds")
-# ipvs <- readRDS("ipvs.rds")
+```{r, include=FALSE}
 ipvs <- ler_ipvs() %>% 
   select(setor = codigo_do_setor_censitario, 
          idade_media_setor = idade_media_das_pessoas_responsaveis, 
@@ -255,7 +229,7 @@ paciente_ipvs
 ```
 
 
-4. Identificação do ponto mais próximo de cada paciente (dado uma lista)
+### 4. Identificação do ponto mais próximo de cada paciente (dado uma lista)
 
 Dados dois pontos, identificar o mais próximo de cada paciente.
 
@@ -271,7 +245,7 @@ paciente_ipvs %>%
 ```
 
 
-5. Cálculo da distância entre os pacitentes e o ponto definido em 4)
+### 5. Cálculo da distância entre os pacitentes e o ponto definido em 4)
 
 ```{r}
 paciente_ipvs %>% 
@@ -282,7 +256,7 @@ paciente_ipvs %>%
          distancias = distancia(ponto, ps))
 ```
 
-6. Criar mapa dos pacientes (leaflet)
+### 6. Criar mapa dos pacientes (leaflet)
 
 ```{r}
 library(leaflet)
@@ -292,15 +266,12 @@ lon_ps <- unlist(ps[[1]])[1]
 paciente_ipvs %>% 
   head(9) %>% 
   mutate(lon = map_dbl(ponto, ~unlist(.x)[1]),
-         lat= map_dbl(ponto, ~unlist(.x)[2])) %>% 
+         lat = map_dbl(ponto, ~unlist(.x)[2])) %>% 
   leaflet() %>%
   addTiles() %>%  # Add default OpenStreetMap map tiles
   addCircleMarkers(~lon, ~lat, label = ~cep, color = ~ifelse(condicao == 1, "red", "blue")) %>% 
   addMarkers(lon_ps, lat_ps, label = "Caism Vila Mariana") %>% 
   addLegend(colors = c("red", "blue"), labels = c("Com condição", "Sem condição"))
 ```
-
-
-
 
 

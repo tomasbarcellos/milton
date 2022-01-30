@@ -3,7 +3,7 @@ Title: Geolocalizar Dados No Brasil
 Version: 0.0.1
 Authors@R: person("Tomás", "Barcellos", email = "tomasbarcellos@gmail.com", role = c("aut", "cre"))
 Description: Geolocalizar dados no Brasil a partir de endere\\u00eo e CEP.
-Depends: R (>= 3.4.4)
+Depends: R (>= 3.5.0)
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
@@ -21,7 +21,9 @@ Imports:
     geobr,
     dplyr,
     stringr,
-    janitor
+    janitor,
+    readr,
+    glue
 URL: https://tomasbarcellos.github.io/milton
 Suggests: 
     testthat (>= 3.0.0),

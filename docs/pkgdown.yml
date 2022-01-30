@@ -3,7 +3,7 @@ pkgdown: 1.6.1
 pkgdown_sha: ~
 articles:
   Tutorial: Tutorial.html
-last_built: 2022-01-30T10:04Z
+last_built: 2022-01-30T12:03Z
 urls:
   reference: https://tomasbarcellos.github.io/milton/reference
   article: https://tomasbarcellos.github.io/milton/articles
