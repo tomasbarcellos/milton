@@ -1,5 +1,6 @@
 ---
 output: github_document
+always_allow_html: true
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -21,87 +22,305 @@ knitr::opts_chunk$set(
 [![Codecov test coverage](https://codecov.io/gh/tomasbarcellos/milton/branch/main/graph/badge.svg)](https://app.codecov.io/gh/tomasbarcellos/milton?branch=main)
 <!-- badges: end -->
 
-The goal of milton is to ...
+O objetivo de milton é oferecer ferramentas para facilitar o georreferenciamento 
+de dados no Brasil.
 
-## Installation
+## Instalação
 
-You can install the development version of milton from [GitHub](https://github.com/) with:
+Você pode instalar a versão de desenvolvimento de milton do 
+[GitHub](https://github.com/) com o código abaixo:
 
 ``` r
 # install.packages("devtools")
 devtools::install_github("tomasbarcellos/milton")
 ```
 
-## Example
-
-o pacote oferece uma série de funções de utilidade para trabalhar com dados 
-georreferenciados.
-
-É possível buscar por endereços e encontrar suas coordenadas geográficas 
-com a função `get_addr`.
-
-```{r example}
+```{r setup}
 library(milton)
-get_addr("Avenida Heróis do Acre")
 ```
 
-A função `geopart` permite identificar o polígono ao qual uma coordenada 
-(ou ponto) pertence.
+# Georreferenciando endereços
+
+O pacote permite que você georrefenrencie seus dados com:
+
+1. Endereço
+2. CEP
 
 ```{r}
-
+av <- get_addr("Avenida pequeno príncipe")
+av
+# CEP da avenida pequeno principe
+get_addr("88063-000")
 ```
 
-Criando dados para usar nos exemplos a seguir.
+# Identificando pertencimento
+
+Carregando funções de utilidade para ler e manipular dados.
 
 ```{r}
+library(tidyverse)
+```
 
+Também é possível identificar o município e o setor censitário de um endereço.
+Para tanto precisamos dos endereços que vamos localizar e as geometrias em que 
+eles devem ser identificados.
+
+```{r include=FALSE}
+mun <- geobr::read_municipality(year = 2018) %>% 
+  rename(geometry = geom)
 ```
 
 
-Com `nearplace` é possível identificar o local (dado uma lista) mais próximo 
-de um ponto.
-
-```{r}
-
+```{r, eval = FALSE}
+mun <- geobr::read_municipality(year = 2018) %>% 
+  rename(geometry = geom)
 ```
 
-`min_dist` retorna a menor distância entre um ponto e um conjunto de localidades.
+
+A função `geopart` permite fazê-lo.
 
 ```{r}
-
-```
-
-# Caso de identificacao do setor censitario
-
-Ler shapes
-
-```{r}
-mun <- brazilmaps::get_brmap("City")
-
-cens <- sf::st_read("inst/extdata/setor censitario", "DEINFO_SETOR_CENSITARIO_2010") %>%
-  sf::st_transform("+proj=longlat +zone=23 +south +ellps=aust_SA +units=m +no_defs") %>%
-  sf::st_as_sf()
-```
-
-Identicar o setor censitario e municipio de um endereco.
-
-```{r}
-coord <- get_addr("Rua vergueiro")
-
-sp <- geopart(coord, mun)
-setor <- geopart(coord, cens)
-```
-
-E fazer um mapa.
-
-```{r}
-library(ggplot2)
-
-ggplot(sp) +
-  geom_sf(fill = "gray99") +
-  geom_sf(data = setor, col = "darkblue", fill = "darkblue") +
-  coord_sf(ylim = c(-23.4, -23.6), ) +
+geo_av <- geopart(av, mun)
+ggplot(mun[geo_av, ]) +
+  geom_sf() +
   theme_void()
 ```
+
+A API do pacote foi construída buscando permitir o uso do pipe (`%>%`).
+
+```{r}
+geo_cast <- get_addr("Estádio Arena Castelão") %>% 
+  geopart(mun)
+
+ggplot(mun[geo_cast, ]) +
+  geom_sf() +
+  theme_void()
+```
+
+Para a identificação do setor censitário também é possível usar a mesma função.
+Para tanto deve-se usar como segundo argumento os polígonos dos setores 
+censitários. Uma forma fácil de acessar esses polígonos é usando o pacote
+`geobr`: `geobr::read_census_tract`. 
+
+```{r, include = FALSE}
+setores <- geobr::read_census_tract(3550308) %>% 
+  rename(geometry = geom)
+```
+
+```{r, eval = FALSE}
+setores <- geobr::read_census_tract(3550308) %>% 
+  rename(geometry = geom)
+```
+
+Com estes polígonos em mãos é possível identificar o setor censitário ao qual 
+determinado endereço pertence.
+
+```{r}
+epm <- get_addr("Rua botucatu, 740")
+
+geo_epm <- geopart(epm, setores)
+
+ggplot(setores[geo_epm, ]) +
+  geom_sf() +
+  theme_void()
+```
+
+Outra funcionalidade do pacote permite relacionar endereços distintos, 
+medindo suas distâncias ou identificando o local mais próximo.
+
+Suponhamos que tenhamos uma tabela com os endereços os pacientes A, B e C:
+
+```{r}
+pacientes <- tibble(
+  paciente = LETTERS[1:3],
+  endereco = c(
+    "Av. Dr. Altino Arantes, 941",
+    "Rua Gandavo, 349, São Paulo",
+    "Rua Bela cruz, 40"
+  )
+) %>% 
+  mutate(latlon = map(endereco, get_addr))
+
+pacientes
+```
+
+E agora é possível calcular a distância entre esses pontos e a Escola Paulista 
+de Medicina.
+
+```{r}
+pacientes %>% 
+  mutate(distancia_km = map_dbl(latlon, distancia, y = epm))
+```
+
+Há um conjunto de funções que permite identificar, por exemplo, o local mais 
+adequado para tratar determinado paciente:
+
+1. `min_dist` retorna a menor distância;
+2. `nearplace` retorna o local mais próximo.
+
+Desse modo, dado um conjunto de hospitais:
+
+```{r}
+hospitais <- c("Hospital São Paulo", 
+               "Hospital Dom Alvarenga",
+               "Hospital Paulistano")
+
+geo_hospitais <- hospitais %>% 
+  map(get_addr) %>% 
+  reduce(c)
+```
+
+É possível identificar a distância dos hospitais para o paciente C:
+
+```{r}
+paciente_C <- pacientes$latlon[[3]]
+distancia(paciente_C, geo_hospitais)
+```
+
+Assim como o hospital de menor distância.
+
+```{r}
+min_dist(paciente_C, geo_hospitais)
+```
+
+E o hospital mais próximo.
+
+```{r}
+prox <- nearplace(paciente_C, geo_hospitais)
+idx <- which(prox == geo_hospitais)
+hospitais[idx]
+```
+
+# Usando CEPs
+
+Tomemos um conjunto qualquer de CEPs.
+
+```{r}
+df_ceps <- tibble(
+  cep = c("01215010", "01508010", "01519000", "01526010", "02180080", 
+          "02849170", "03347070", "03380150", "03590080", "03737230", 
+          "04011060", "04018000", "04050060", "04108001", "04111000",
+          "04233140", "04421150", "04433180", "04633030", "04813190",
+          "04853185", "05010000", "05409002", "05540020", "05790230",
+          "06000150", "07717170", "07858150", "07865115", "08062320", 
+          "08140000", "08142710", "08370220", "08421520", "08700000",
+          "08770130", "08790000", "08793030", "09911550")
+)
+```
+
+Assumamos que representam o endereço de pacientes cujas condições estão 
+apresentadas na tabela abaixo.
+
+```{r}
+set.seed(123)
+df_pacientes <- df_ceps %>% 
+  mutate(
+    id = seq_along(cep),
+    condicao = sample(c(0, 1), length(cep), replace = TRUE)
+  )
+
+df_pacientes
+```
+
+Agora usemos as funções do pacote para complementar nosso bando de dados com:
+
+1. Georreferenciamento dos pacientes
+2. Identificação do setor censitário em que os pacientes estão localizados
+3. Relacionamento com dados do IPVS do referido setor censitário
+4. Identificação do ponto mais próximo de cada paciente (dado uma lista)
+5. Cálculo da distância entre os pacitentes e o ponto definido em 4)
+6. Criar mapa dos pacientes (leaflet)
+
+
+### 1. Georreferenciamento dos pacientes
+
+```{r}
+geo_pacientes <- df_pacientes %>% 
+  mutate(endereco = map_chr(cep, milton:::cep),
+         ponto = map(endereco, get_addr))
+```
+
+
+### 2. Identificação do setor censitário em que os pacientes estão localizados
+
+```{r}
+setor_paciente <- geo_pacientes %>% 
+  mutate(idx = map_int(ponto, geopart, setores),
+         setor = setores$code_tract[idx])
+```
+
+### 3. Relacionamento com dados do IPVS do referido setor censitário
+
+Ler dados do Índice Paulista de Vulnerabilidade Social (IPVS).
+
+```{r, include=FALSE}
+ipvs <- ler_ipvs() %>% 
+  select(setor = codigo_do_setor_censitario, 
+         idade_media_setor = idade_media_das_pessoas_responsaveis, 
+         p_renda_meio_sm_setor =  proporcao_de_domicilios_particulares_com_rendimento_nominal_mensal_de_ate_1_2_s_m,
+         p_alfabetizadas_setor = proporcao_de_pessoas_responsaveis_alfabetizadas)
+```
+
+```{r, eval=FALSE}
+ipvs <- ler_ipvs() %>% 
+  select(setor = codigo_do_setor_censitario, 
+         idade_media_setor = idade_media_das_pessoas_responsaveis, 
+         p_renda_meio_sm_setor =  proporcao_de_domicilios_particulares_com_rendimento_nominal_mensal_de_ate_1_2_s_m,
+         p_alfabetizadas_setor = proporcao_de_pessoas_responsaveis_alfabetizadas)
+```
+
+Relacionar com dados dos pacientes
+
+```{r}
+paciente_ipvs <- setor_paciente %>% 
+  left_join(ipvs, by = "setor")
+paciente_ipvs
+```
+
+
+### 4. Identificação do ponto mais próximo de cada paciente (dado uma lista)
+
+Dados dois pontos, identificar aquele mais próximo de cada paciente.
+
+```{r}
+ps <- c(get_addr("04017-030"), get_addr("Hospital Albert Einstein"))
+nomes_ps <- c("Caism Vila Mariana", "Einstein")
+
+paciente_ipvs %>% 
+  head(9) %>%
+  select(id, condicao, cep, endereco, ponto) %>% 
+  mutate(ponto = reduce(ponto, c),
+         prox = nomes_ps[map(nearplace(ponto, ps), sf::st_equals, ps) %>% unlist()])
+```
+
+
+### 5. Cálculo da distância entre os pacitentes e o ponto definido em 4)
+
+```{r}
+paciente_ipvs %>% 
+  head(9) %>%
+  select(id, condicao, cep, endereco, ponto) %>% 
+  mutate(ponto = reduce(ponto, c),
+         # Em quilometros
+         distancias = distancia(ponto, ps))
+```
+
+### 6. Criar mapa dos pacientes (leaflet)
+
+```{r}
+library(leaflet)
+lat_ps <- unlist(ps[[1]])[2]
+lon_ps <- unlist(ps[[1]])[1]
+
+paciente_ipvs %>% 
+  head(9) %>% 
+  mutate(lon = map_dbl(ponto, ~unlist(.x)[1]),
+         lat = map_dbl(ponto, ~unlist(.x)[2])) %>% 
+  leaflet() %>%
+  addTiles() %>%  # Add default OpenStreetMap map tiles
+  addCircleMarkers(~lon, ~lat, label = ~cep, color = ~ifelse(condicao == 1, "red", "blue")) %>% 
+  addMarkers(lon_ps, lat_ps, label = "Caism Vila Mariana") %>% 
+  addLegend(colors = c("red", "blue"), labels = c("Com condição", "Sem condição"))
+```
+
 

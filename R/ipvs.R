@@ -2,7 +2,6 @@
 #'
 #' @return Uma tibble
 #' @export
-#' importFrom("utils", "head", "unzip")
 ler_ipvs <- function() {
   td <- tempdir()
   tf <- tempfile(tmpdir = td)
