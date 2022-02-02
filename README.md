@@ -374,7 +374,6 @@ paciente_ipvs %>%
 
 ``` r
 library(leaflet)
-#> Warning: package 'leaflet' was built under R version 4.1.2
 lat_ps <- unlist(ps[[1]])[2]
 lon_ps <- unlist(ps[[1]])[1]
 
@@ -389,5 +388,4 @@ paciente_ipvs %>%
   addLegend(colors = c("red", "blue"), labels = c("Com condição", "Sem condição"))
 ```
 
-<div id="htmlwidget-4b8e1fe96c0688a84916" style="width:100%;height:480px;" class="leaflet html-widget"></div>
-<script type="application/json" data-for="htmlwidget-4b8e1fe96c0688a84916">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addTiles","args":["//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",null,null,{"minZoom":0,"maxZoom":18,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":1,"detectRetina":false,"attribution":"&copy; <a href=\"http://openstreetmap.org\">OpenStreetMap<\/a> contributors, <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA<\/a>"}]},{"method":"addCircleMarkers","args":[[-23.5330976,-23.5616706,-23.5616405,-23.5634204,-23.5182701,-23.4670588,-23.5624241,-23.5757523,-23.5455713],[-46.6412249,-46.6365158,-46.6274813,-46.6320893,-46.5658705,-46.6862926,-46.5665026,-46.5337924,-46.4827332],10,null,null,{"interactive":true,"className":"","stroke":true,"color":["blue","blue","blue","red","blue","red","red","red","blue"],"weight":5,"opacity":0.5,"fill":true,"fillColor":["blue","blue","blue","red","blue","red","red","red","blue"],"fillOpacity":0.2},null,null,null,null,["01215010","01508010","01519000","01526010","02180080","02849170","03347070","03380150","03590080"],{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]},{"method":"addMarkers","args":[-23.5877375,-46.6379472155264,null,null,null,{"interactive":true,"draggable":false,"keyboard":true,"title":"","alt":"","zIndexOffset":0,"opacity":1,"riseOnHover":false,"riseOffset":250},null,null,null,null,"Caism Vila Mariana",{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]},{"method":"addLegend","args":[{"colors":["red","blue"],"labels":["Com condição","Sem condição"],"na_color":null,"na_label":"NA","opacity":0.5,"position":"topright","type":"unknown","title":null,"extra":null,"layerId":null,"className":"info legend","group":null}]}],"limits":{"lat":[-23.5877375,-23.4670588],"lng":[-46.6862926,-46.4827332]}},"evals":[],"jsHooks":[]}</script>
+![](mapa.png)

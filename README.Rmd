@@ -307,7 +307,7 @@ paciente_ipvs %>%
 
 ### 6. Criar mapa dos pacientes (leaflet)
 
-```{r}
+```{r, eval = FALSE}
 library(leaflet)
 lat_ps <- unlist(ps[[1]])[2]
 lon_ps <- unlist(ps[[1]])[1]
@@ -323,4 +323,5 @@ paciente_ipvs %>%
   addLegend(colors = c("red", "blue"), labels = c("Com condição", "Sem condição"))
 ```
 
+![](mapa.png)
 
