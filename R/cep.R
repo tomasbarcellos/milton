@@ -5,6 +5,7 @@
 #' @return Endereco do CEP como texto
 #'
 #' @importFrom magrittr %>%
+#' @export
 #'
 cep <- function(x) {
   if (length(x) > 1) {
