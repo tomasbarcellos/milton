@@ -29,3 +29,8 @@ test_that("Erros sao suaves", {
 
 })
 
+test_that("Possui comportamento vetorizado", {
+  resp1 <- get_addr(c("Avenida pequeno príncipe", "Rua Vergueiro"))
+  expect_s3_class(resp1, "sfc")
+  expect_length(resp1, 2)
+})
