@@ -1,4 +1,15 @@
 ##' nearplace
+#' @rdname nearplace
+#' @export
+#'
+which_nearplace <- function(coords, targets){
+  dists <- distancia(coords, targets)
+
+  apply(dists, 1, which.min) %>%
+    map_dbl(~ifelse(length(.x) == 0, NA_real_, .x))
+}
+
+##' nearplace
 #'
 #' Returns the nearest pleace given a set of targets and a dataframe with coordinates.
 #' Uses sp spDistsN1 with Great Circle distance as default.
@@ -8,9 +19,5 @@
 #' @export
 #'
 nearplace <- function(coords, targets){
-  dists <- distancia(coords, targets)
-
-  idx <- apply(dists, 1, which.min)
-
-  targets[idx]
+  targets[which_nearplace(coords, targets)]
 }

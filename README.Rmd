@@ -123,7 +123,7 @@ epm <- get_addr("Rua botucatu, 740")
 geo_epm <- geopart(epm, setores)
 
 ggplot(setores[geo_epm, ]) +
-  geom_sf(default_crs = NULL) +
+  geom_sf() +
   theme_void()
 ```
 
@@ -240,6 +240,7 @@ Agora usemos as funções do pacote para complementar nosso bando de dados com:
 geo_pacientes <- df_pacientes %>% 
   mutate(endereco = cep(ceps),
          ponto = get_addr(endereco))
+geo_pacientes
 ```
 
 
@@ -249,6 +250,7 @@ geo_pacientes <- df_pacientes %>%
 setor_paciente <- geo_pacientes %>% 
   mutate(idx = map_int(ponto, geopart, setores),
          setor = setores$code_tract[idx])
+setor_paciente
 ```
 
 ### 3. Relacionamento com dados do IPVS do referido setor censitário
@@ -289,9 +291,11 @@ ps <- get_addr(c("04017-030", "Hospital Albert Einstein"))
 nomes_ps <- c("Caism Vila Mariana", "Einstein")
 
 paciente_ipvs %>% 
-  head(9) %>%
+  # head() %>% 
   select(id, condicao, ceps, endereco, ponto) %>% 
-  mutate(prox = nomes_ps[map(nearplace(ponto, ps), sf::st_equals, ps) %>% unlist()])
+  mutate(prox = nearplace(ponto, ps),
+         nome_prox = nomes_ps[which_nearplace(ponto, ps)]) %>% 
+  glimpse()
 ```
 
 
@@ -299,9 +303,10 @@ paciente_ipvs %>%
 
 ```{r}
 paciente_ipvs %>% 
-  head(9) %>%
   select(id, condicao, ceps, endereco, ponto) %>% 
-  mutate(distancias = distancia(ponto, ps)) # Em quilometros
+  # Em quilometros
+  mutate(distancias = distancia(ponto, ps)) %>%  
+  glimpse()
 ```
 
 ### 6. Criar mapa dos pacientes (leaflet)
@@ -312,7 +317,6 @@ lat_ps <- unlist(ps[[1]])[2]
 lon_ps <- unlist(ps[[1]])[1]
 
 paciente_ipvs %>% 
-  head(9) %>% 
   mutate(lon = map_dbl(ponto, ~unlist(.x)[1]),
          lat = map_dbl(ponto, ~unlist(.x)[2])) %>% 
   leaflet() %>%
