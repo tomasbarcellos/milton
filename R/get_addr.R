@@ -12,6 +12,14 @@ get_addr <- function(address = NULL){
     return(get_addr(cep(address)))
   }
 
+  if (length(address) > 1) {
+    return(
+      address %>%
+        purrr::map(get_addr) %>%
+        purrr::reduce(c)
+    )
+  }
+
   vazio <- sf::st_sfc(sf::st_point(), crs = 4674)
 
   if(suppressWarnings(is.null(address))) {

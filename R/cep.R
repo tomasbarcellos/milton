@@ -5,8 +5,13 @@
 #' @return Endereco do CEP como texto
 #'
 #' @importFrom magrittr %>%
+#' @export
 #'
 cep <- function(x) {
+  if (length(x) > 1) {
+    return(purrr::map_chr(x, cep))
+  }
+
   texto <- httr::POST("https://www.achecep.com.br/",
                      body = list(q = x),
                      encode = "form") %>%

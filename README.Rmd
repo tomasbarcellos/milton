@@ -66,7 +66,8 @@ Para tanto precisamos dos endereços que vamos localizar e as geometrias em que
 eles devem ser identificados.
 
 ```{r include=FALSE}
-mun <- geobr::read_municipality(year = 2018) %>% 
+mun <- readRDS("tests/testthat/mun.rds") %>%
+  sf::st_transform(crs = 4674) %>% 
   rename(geometry = geom)
 ```
 
@@ -89,10 +90,10 @@ ggplot(mun[geo_av, ]) +
 A API do pacote foi construída buscando permitir o uso do pipe (`%>%`).
 
 ```{r}
-geo_cast <- get_addr("Estádio Arena Castelão") %>% 
+geo_museu <- get_addr("Museu da Língua Portuguesa") %>% 
   geopart(mun)
 
-ggplot(mun[geo_cast, ]) +
+ggplot(mun[geo_museu, ]) +
   geom_sf() +
   theme_void()
 ```
@@ -103,7 +104,8 @@ censitários. Uma forma fácil de acessar esses polígonos é usando o pacote
 `geobr`: `geobr::read_census_tract`. 
 
 ```{r, include = FALSE}
-setores <- geobr::read_census_tract(3550308) %>% 
+setores <- readRDS("tests/testthat/censo.rds") %>%
+  sf::st_transform(crs = 4674) %>% 
   rename(geometry = geom)
 ```
 
@@ -121,7 +123,7 @@ epm <- get_addr("Rua botucatu, 740")
 geo_epm <- geopart(epm, setores)
 
 ggplot(setores[geo_epm, ]) +
-  geom_sf() +
+  geom_sf(default_crs = NULL) +
   theme_void()
 ```
 
@@ -197,7 +199,7 @@ Tomemos um conjunto qualquer de CEPs.
 
 ```{r}
 df_ceps <- tibble(
-  cep = c("01215010", "01508010", "01519000", "01526010", "02180080", 
+  ceps = c("01215010", "01508010", "01519000", "01526010", "02180080", 
           "02849170", "03347070", "03380150", "03590080", "03737230", 
           "04011060", "04018000", "04050060", "04108001", "04111000",
           "04233140", "04421150", "04433180", "04633030", "04813190",
@@ -215,8 +217,8 @@ apresentadas na tabela abaixo.
 set.seed(123)
 df_pacientes <- df_ceps %>% 
   mutate(
-    id = seq_along(cep),
-    condicao = sample(c(0, 1), length(cep), replace = TRUE)
+    id = seq_along(ceps),
+    condicao = sample(c(0, 1), length(ceps), replace = TRUE)
   )
 
 df_pacientes
@@ -236,8 +238,8 @@ Agora usemos as funções do pacote para complementar nosso bando de dados com:
 
 ```{r}
 geo_pacientes <- df_pacientes %>% 
-  mutate(endereco = map_chr(cep, milton:::cep),
-         ponto = map(endereco, get_addr))
+  mutate(endereco = cep(ceps),
+         ponto = get_addr(endereco))
 ```
 
 
@@ -274,7 +276,7 @@ Relacionar com dados dos pacientes
 ```{r}
 paciente_ipvs <- setor_paciente %>% 
   left_join(ipvs, by = "setor")
-paciente_ipvs
+glimpse(paciente_ipvs)
 ```
 
 
@@ -283,14 +285,13 @@ paciente_ipvs
 Dados dois pontos, identificar aquele mais próximo de cada paciente.
 
 ```{r}
-ps <- c(get_addr("04017-030"), get_addr("Hospital Albert Einstein"))
+ps <- get_addr(c("04017-030", "Hospital Albert Einstein"))
 nomes_ps <- c("Caism Vila Mariana", "Einstein")
 
 paciente_ipvs %>% 
   head(9) %>%
-  select(id, condicao, cep, endereco, ponto) %>% 
-  mutate(ponto = reduce(ponto, c),
-         prox = nomes_ps[map(nearplace(ponto, ps), sf::st_equals, ps) %>% unlist()])
+  select(id, condicao, ceps, endereco, ponto) %>% 
+  mutate(prox = nomes_ps[map(nearplace(ponto, ps), sf::st_equals, ps) %>% unlist()])
 ```
 
 
@@ -299,10 +300,8 @@ paciente_ipvs %>%
 ```{r}
 paciente_ipvs %>% 
   head(9) %>%
-  select(id, condicao, cep, endereco, ponto) %>% 
-  mutate(ponto = reduce(ponto, c),
-         # Em quilometros
-         distancias = distancia(ponto, ps))
+  select(id, condicao, ceps, endereco, ponto) %>% 
+  mutate(distancias = distancia(ponto, ps)) # Em quilometros
 ```
 
 ### 6. Criar mapa dos pacientes (leaflet)
@@ -318,7 +317,7 @@ paciente_ipvs %>%
          lat = map_dbl(ponto, ~unlist(.x)[2])) %>% 
   leaflet() %>%
   addTiles() %>%  # Add default OpenStreetMap map tiles
-  addCircleMarkers(~lon, ~lat, label = ~cep, color = ~ifelse(condicao == 1, "red", "blue")) %>% 
+  addCircleMarkers(~lon, ~lat, label = ~p_renda_meio_sm_setor, color = ~ifelse(condicao == 1, "red", "blue")) %>% 
   addMarkers(lon_ps, lat_ps, label = "Caism Vila Mariana") %>% 
   addLegend(colors = c("red", "blue"), labels = c("Com condição", "Sem condição"))
 ```
