@@ -22,7 +22,7 @@ get_addr <- function(address = NULL){
 
   vazio <- sf::st_sfc(sf::st_point(), crs = 4674)
 
-  if(suppressWarnings(is.null(address))) {
+  if(suppressWarnings(is.null(address) | isTRUE(is.na(address)))) {
     return(vazio)
   }
 
