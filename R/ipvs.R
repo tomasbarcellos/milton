@@ -9,8 +9,10 @@ ler_ipvs <- function() {
             httr::write_disk(tf))
   utils::unzip(tf, exdir = td)
 
-  dicionario <- readr::read_tsv(file.path(td, "IPVS_Dicionario.txt"),
-                                locale = readr::locale(encoding = "UCS-2LE")) %>%
+  dicionario <- suppressMessages(
+    readr::read_tsv(file.path(td, "IPVS_Dicionario.txt"),
+                    locale = readr::locale(encoding = "UCS-2LE"))
+  ) %>%
     janitor::clean_names() %>%
     utils::head(51) %>%
     dplyr::mutate(
@@ -20,7 +22,9 @@ ler_ipvs <- function() {
     ) %>%
     unique()
 
-  ipvs <- readr::read_csv2(file.path(td, "BaseIPVS2010.csv")) %>%
+  ipvs <- suppressMessages(
+    readr::read_csv2(file.path(td, "BaseIPVS2010.csv"))
+    ) %>%
     purrr::set_names(dicionario$descricao) %>%
     janitor::clean_names()
 
