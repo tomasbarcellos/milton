@@ -94,10 +94,10 @@ ggplot(mun[geo_av, ]) +
 A API do pacote foi construída buscando permitir o uso do pipe (`%>%`).
 
 ``` r
-geo_cast <- get_addr("Estádio Arena Castelão") %>% 
+geo_museu <- get_addr("Museu da Língua Portuguesa") %>% 
   geopart(mun)
 
-ggplot(mun[geo_cast, ]) +
+ggplot(mun[geo_museu, ]) +
   geom_sf() +
   theme_void()
 ```
@@ -144,15 +144,15 @@ pacientes <- tibble(
     "Rua Bela cruz, 40"
   )
 ) %>% 
-  mutate(latlon = map(endereco, get_addr))
+  mutate(latlon = get_addr(endereco))
 
 pacientes
 #> # A tibble: 3 x 3
-#>   paciente endereco                    latlon           
-#>   <chr>    <chr>                       <list>           
-#> 1 A        Av. Dr. Altino Arantes, 941 <POINT (-46.6...>
-#> 2 B        Rua Gandavo, 349, São Paulo <POINT (-46.6...>
-#> 3 C        Rua Bela cruz, 40           <POINT (-46.5...>
+#>   paciente endereco                                   latlon
+#>   <chr>    <chr>                                 <POINT [°]>
+#> 1 A        Av. Dr. Altino Arantes, 941  (-46.6368 -23.60279)
+#> 2 B        Rua Gandavo, 349, São Paulo (-46.64136 -23.59199)
+#> 3 C        Rua Bela cruz, 40            (-46.5806 -23.57739)
 ```
 
 E agora é possível calcular a distância entre esses pontos e a Escola
@@ -160,13 +160,13 @@ Paulista de Medicina.
 
 ``` r
 pacientes %>% 
-  mutate(distancia_km = map_dbl(latlon, distancia, y = epm))
+  mutate(distancia_km = distancia(latlon, epm))
 #> # A tibble: 3 x 4
-#>   paciente endereco                    latlon            distancia_km
-#>   <chr>    <chr>                       <list>                   <dbl>
-#> 1 A        Av. Dr. Altino Arantes, 941 <POINT (-46.6...>        0.752
-#> 2 B        Rua Gandavo, 349, São Paulo <POINT (-46.6...>        0.827
-#> 3 C        Rua Bela cruz, 40           <POINT (-46.5...>        6.82
+#>   paciente endereco                                   latlon distancia_km[,1]
+#>   <chr>    <chr>                                 <POINT [°]>            <dbl>
+#> 1 A        Av. Dr. Altino Arantes, 941  (-46.6368 -23.60279)            0.752
+#> 2 B        Rua Gandavo, 349, São Paulo (-46.64136 -23.59199)            0.827
+#> 3 C        Rua Bela cruz, 40            (-46.5806 -23.57739)            6.82
 ```
 
 Há um conjunto de funções que permite identificar, por exemplo, o local
@@ -182,15 +182,13 @@ hospitais <- c("Hospital São Paulo",
                "Hospital Dom Alvarenga",
                "Hospital Paulistano")
 
-geo_hospitais <- hospitais %>% 
-  map(get_addr) %>% 
-  reduce(c)
+geo_hospitais <- get_addr(hospitais)
 ```
 
 É possível identificar a distância dos hospitais para o paciente C:
 
 ``` r
-paciente_C <- pacientes$latlon[[3]]
+paciente_C <- pacientes$latlon[3]
 distancia(paciente_C, geo_hospitais)
 #>          [,1]     [,2]    [,3]
 #> [1,] 6.802523 3.571139 6.42353
@@ -218,7 +216,7 @@ Tomemos um conjunto qualquer de CEPs.
 
 ``` r
 df_ceps <- tibble(
-  cep = c("01215010", "01508010", "01519000", "01526010", "02180080", 
+  ceps = c("01215010", "01508010", "01519000", "01526010", "02180080", 
           "02849170", "03347070", "03380150", "03590080", "03737230", 
           "04011060", "04018000", "04050060", "04108001", "04111000",
           "04233140", "04421150", "04433180", "04633030", "04813190",
@@ -236,13 +234,13 @@ apresentadas na tabela abaixo.
 set.seed(123)
 df_pacientes <- df_ceps %>% 
   mutate(
-    id = seq_along(cep),
-    condicao = sample(c(0, 1), length(cep), replace = TRUE)
+    id = seq_along(ceps),
+    condicao = sample(c(0, 1), length(ceps), replace = TRUE)
   )
 
 df_pacientes
 #> # A tibble: 39 x 3
-#>    cep         id condicao
+#>    ceps        id condicao
 #>    <chr>    <int>    <dbl>
 #>  1 01215010     1        0
 #>  2 01508010     2        0
@@ -273,8 +271,23 @@ com:
 
 ``` r
 geo_pacientes <- df_pacientes %>% 
-  mutate(endereco = map_chr(cep, milton:::cep),
-         ponto = map(endereco, get_addr))
+  mutate(endereco = cep(ceps),
+         ponto = get_addr(endereco))
+geo_pacientes
+#> # A tibble: 39 x 5
+#>    ceps        id condicao endereco                                        ponto
+#>    <chr>    <int>    <dbl> <chr>                                     <POINT [°]>
+#>  1 01215010     1        0 Rua Helvétia, São Paulo          (-46.64122 -23.5331)
+#>  2 01508010     2        0 Rua Taguá, São Paulo            (-46.63652 -23.56167)
+#>  3 01519000     3        0 Rua do Lavapés, São Paulo       (-46.62748 -23.56164)
+#>  4 01526010     4        1 Rua Tenente Otávio Gomes, São ~ (-46.63209 -23.56342)
+#>  5 02180080     5        0 Rua Soldado Manasses de Aguiar~ (-46.56587 -23.51827)
+#>  6 02849170     6        1 Rua Bernardo Rincon, São Paulo  (-46.68629 -23.46706)
+#>  7 03347070     7        1 Rua Maestro Artur Elias Kauffm~  (-46.5665 -23.56242)
+#>  8 03380150     8        1 Rua Cruzeiro dos Peixotos, São~ (-46.53379 -23.57575)
+#>  9 03590080     9        0 Rua Padre Manuel Barreto, São ~ (-46.48273 -23.54557)
+#> 10 03737230    10        0 Rua Conceição do Rio Verde, Sã~ (-46.50943 -23.51041)
+#> # ... with 29 more rows
 ```
 
 ### 2. Identificação do setor censitário em que os pacientes estão localizados
@@ -283,6 +296,21 @@ geo_pacientes <- df_pacientes %>%
 setor_paciente <- geo_pacientes %>% 
   mutate(idx = map_int(ponto, geopart, setores),
          setor = setores$code_tract[idx])
+setor_paciente
+#> # A tibble: 39 x 7
+#>    ceps        id condicao endereco                           ponto   idx setor 
+#>    <chr>    <int>    <dbl> <chr>                        <POINT [°]> <int> <chr> 
+#>  1 01215010     1        0 Rua Helvétia, São~  (-46.64122 -23.5331) 13923 35503~
+#>  2 01508010     2        0 Rua Taguá, São Pa~ (-46.63652 -23.56167) 10240 35503~
+#>  3 01519000     3        0 Rua do Lavapés, S~ (-46.62748 -23.56164) 10223 35503~
+#>  4 01526010     4        1 Rua Tenente Otávi~ (-46.63209 -23.56342) 10167 35503~
+#>  5 02180080     5        0 Rua Soldado Manas~ (-46.56587 -23.51827) 17418 35503~
+#>  6 02849170     6        1 Rua Bernardo Rinc~ (-46.68629 -23.46706)  1001 35503~
+#>  7 03347070     7        1 Rua Maestro Artur~  (-46.5665 -23.56242)   107 35503~
+#>  8 03380150     8        1 Rua Cruzeiro dos ~ (-46.53379 -23.57575) 16920 35503~
+#>  9 03590080     9        0 Rua Padre Manuel ~ (-46.48273 -23.54557)   536 35503~
+#> 10 03737230    10        0 Rua Conceição do ~ (-46.50943 -23.51041) 12705 35503~
+#> # ... with 29 more rows
 ```
 
 ### 3. Relacionamento com dados do IPVS do referido setor censitário
@@ -295,6 +323,22 @@ ipvs <- ler_ipvs() %>%
          idade_media_setor = idade_media_das_pessoas_responsaveis, 
          p_renda_meio_sm_setor =  proporcao_de_domicilios_particulares_com_rendimento_nominal_mensal_de_ate_1_2_s_m,
          p_alfabetizadas_setor = proporcao_de_pessoas_responsaveis_alfabetizadas)
+#> Rows: 73 Columns: 2
+#> -- Column specification --------------------------------------------------------
+#> Delimiter: "\t"
+#> chr (2): Variável, Descrição
+#> 
+#> i Use `spec()` to retrieve the full column specification for this data.
+#> i Specify the column types or set `show_col_types = FALSE` to quiet this message.
+#> i Using "','" as decimal and "'.'" as grouping mark. Use `read_delim()` for more control.
+#> Rows: 66096 Columns: 51
+#> -- Column specification --------------------------------------------------------
+#> Delimiter: ";"
+#> chr  (5): v2, v4, v6, v62, v9
+#> dbl (46): v1, v3, v5, v61, v7, v8, v10, v11, v12, v13, v14, v15, v16, v17, v...
+#> 
+#> i Use `spec()` to retrieve the full column specification for this data.
+#> i Specify the column types or set `show_col_types = FALSE` to quiet this message.
 ```
 
 Relacionar com dados dos pacientes
@@ -302,22 +346,19 @@ Relacionar com dados dos pacientes
 ``` r
 paciente_ipvs <- setor_paciente %>% 
   left_join(ipvs, by = "setor")
-paciente_ipvs
-#> # A tibble: 39 x 10
-#>    cep         id condicao endereco       ponto      idx setor  idade_media_set~
-#>    <chr>    <int>    <dbl> <chr>          <list>   <int> <chr>             <dbl>
-#>  1 01215010     1        0 Rua Helvétia   <POINT ~ 13923 35503~             41.7
-#>  2 01508010     2        0 Rua Taguá      <POINT ~ 10240 35503~             44.3
-#>  3 01519000     3        0 Rua do Lavapés <POINT ~ 10223 35503~             37.6
-#>  4 01526010     4        1 Rua Tenente O~ <POINT ~ 10167 35503~             48.4
-#>  5 02180080     5        0 Rua Soldado M~ <POINT ~ 17418 35503~             50.0
-#>  6 02849170     6        1 Rua Bernardo ~ <POINT ~  1001 35503~             48.3
-#>  7 03347070     7        1 Rua Maestro A~ <POINT ~   107 35503~             56.0
-#>  8 03380150     8        1 Rua Cruzeiro ~ <POINT ~ 16920 35503~             48.6
-#>  9 03590080     9        0 Rua Padre Man~ <POINT ~   536 35503~             49.4
-#> 10 03737230    10        0 Rua Conceição~ <POINT ~    NA <NA>               NA  
-#> # ... with 29 more rows, and 2 more variables: p_renda_meio_sm_setor <dbl>,
-#> #   p_alfabetizadas_setor <dbl>
+glimpse(paciente_ipvs)
+#> Rows: 39
+#> Columns: 10
+#> $ ceps                  <chr> "01215010", "01508010", "01519000", "01526010", ~
+#> $ id                    <int> 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1~
+#> $ condicao              <dbl> 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 1, 0, ~
+#> $ endereco              <chr> "Rua Helvétia, São Paulo", "Rua Taguá, São Paulo~
+#> $ ponto                 <POINT [°]> POINT (-46.64122 -23.5331), POINT (-46.636~
+#> $ idx                   <int> 13923, 10240, 10223, 10167, 17418, 1001, 107, 16~
+#> $ setor                 <chr> "355030869000101", "355030849000088", "355030849~
+#> $ idade_media_setor     <dbl> 41.70769, 44.28804, 37.60440, 48.37607, 50.01099~
+#> $ p_renda_meio_sm_setor <dbl> 9.2105263, 1.1627907, 12.8205128, 2.5641026, 9.8~
+#> $ p_alfabetizadas_setor <dbl> 93.53846, 97.82609, 95.97070, 98.71795, 97.80220~
 ```
 
 ### 4. Identificação do ponto mais próximo de cada paciente (dado uma lista)
@@ -325,49 +366,41 @@ paciente_ipvs
 Dados dois pontos, identificar aquele mais próximo de cada paciente.
 
 ``` r
-ps <- c(get_addr("04017-030"), get_addr("Hospital Albert Einstein"))
+ps <- get_addr(c("04017-030", "Hospital Albert Einstein"))
 nomes_ps <- c("Caism Vila Mariana", "Einstein")
 
 paciente_ipvs %>% 
-  head(9) %>%
-  select(id, condicao, cep, endereco, ponto) %>% 
-  mutate(ponto = reduce(ponto, c),
-         prox = nomes_ps[map(nearplace(ponto, ps), sf::st_equals, ps) %>% unlist()])
-#> # A tibble: 9 x 6
-#>      id condicao cep      endereco                               ponto prox     
-#>   <int>    <dbl> <chr>    <chr>                            <POINT [°]> <chr>    
-#> 1     1        0 01215010 Rua Helvétia            (-46.64122 -23.5331) Caism Vi~
-#> 2     2        0 01508010 Rua Taguá              (-46.63652 -23.56167) Caism Vi~
-#> 3     3        0 01519000 Rua do Lavapés         (-46.62748 -23.56164) Caism Vi~
-#> 4     4        1 01526010 Rua Tenente Otávio Go~ (-46.63209 -23.56342) Caism Vi~
-#> 5     5        0 02180080 Rua Soldado Manasses ~ (-46.56587 -23.51827) Caism Vi~
-#> 6     6        1 02849170 Rua Bernardo Rincon    (-46.68629 -23.46706) Caism Vi~
-#> 7     7        1 03347070 Rua Maestro Artur Eli~  (-46.5665 -23.56242) Caism Vi~
-#> 8     8        1 03380150 Rua Cruzeiro dos Peix~ (-46.53379 -23.57575) Caism Vi~
-#> 9     9        0 03590080 Rua Padre Manuel Barr~ (-46.48273 -23.54557) Caism Vi~
+  select(id, condicao, ceps, endereco, ponto) %>% 
+  mutate(prox = nearplace(ponto, ps),
+         nome_prox = nomes_ps[which_nearplace(ponto, ps)]) %>% 
+  glimpse()
+#> Rows: 39
+#> Columns: 7
+#> $ id        <int> 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 1~
+#> $ condicao  <dbl> 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 1, 0, 1, 0, 0, 0, ~
+#> $ ceps      <chr> "01215010", "01508010", "01519000", "01526010", "02180080", ~
+#> $ endereco  <chr> "Rua Helvétia, São Paulo", "Rua Taguá, São Paulo", "Rua do L~
+#> $ ponto     <POINT [°]> POINT (-46.64122 -23.5331), POINT (-46.63652 -23.56167~
+#> $ prox      <POINT [°]> POINT (-46.63795 -23.58774), POINT (-46.63795 -23.5877~
+#> $ nome_prox <chr> "Caism Vila Mariana", "Caism Vila Mariana", "Caism Vila Mari~
 ```
 
 ### 5. Cálculo da distância entre os pacitentes e o ponto definido em 4)
 
 ``` r
 paciente_ipvs %>% 
-  head(9) %>%
-  select(id, condicao, cep, endereco, ponto) %>% 
-  mutate(ponto = reduce(ponto, c),
-         # Em quilometros
-         distancias = distancia(ponto, ps))
-#> # A tibble: 9 x 6
-#>      id condicao cep      endereco                    ponto distancias[,1]  [,2]
-#>   <int>    <dbl> <chr>    <chr>                 <POINT [°]>          <dbl> <dbl>
-#> 1     1        0 01215010 Rua Helvét~  (-46.64122 -23.5331)           6.08  6.56
-#> 2     2        0 01508010 Rua Taguá   (-46.63652 -23.56167)           2.90  3.38
-#> 3     3        0 01519000 Rua do Lav~ (-46.62748 -23.56164)           3.09  3.57
-#> 4     4        1 01526010 Rua Tenent~ (-46.63209 -23.56342)           2.77  3.25
-#> 5     5        0 02180080 Rua Soldad~ (-46.56587 -23.51827)          10.7  11.1 
-#> 6     6        1 02849170 Rua Bernar~ (-46.68629 -23.46706)          14.3  14.7 
-#> 7     7        1 03347070 Rua Maestr~  (-46.5665 -23.56242)           7.81  8.07
-#> 8     8        1 03380150 Rua Cruzei~ (-46.53379 -23.57575)          10.7  10.9 
-#> 9     9        0 03590080 Rua Padre ~ (-46.48273 -23.54557)          16.5  16.7
+  select(id, condicao, ceps, endereco, ponto) %>% 
+  # Em quilometros
+  mutate(distancias = distancia(ponto, ps)) %>%  
+  glimpse()
+#> Rows: 39
+#> Columns: 6
+#> $ id         <int> 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, ~
+#> $ condicao   <dbl> 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 1, 0, 1, 0, 0, 0,~
+#> $ ceps       <chr> "01215010", "01508010", "01519000", "01526010", "02180080",~
+#> $ endereco   <chr> "Rua Helvétia, São Paulo", "Rua Taguá, São Paulo", "Rua do ~
+#> $ ponto      <POINT [°]> POINT (-46.64122 -23.5331), POINT (-46.63652 -23.5616~
+#> $ distancias <dbl[,2]> <matrix[26 x 2]>
 ```
 
 ### 6. Criar mapa dos pacientes (leaflet)
@@ -378,12 +411,11 @@ lat_ps <- unlist(ps[[1]])[2]
 lon_ps <- unlist(ps[[1]])[1]
 
 paciente_ipvs %>% 
-  head(9) %>% 
   mutate(lon = map_dbl(ponto, ~unlist(.x)[1]),
          lat = map_dbl(ponto, ~unlist(.x)[2])) %>% 
   leaflet() %>%
   addTiles() %>%  # Add default OpenStreetMap map tiles
-  addCircleMarkers(~lon, ~lat, label = ~cep, color = ~ifelse(condicao == 1, "red", "blue")) %>% 
+  addCircleMarkers(~lon, ~lat, label = ~p_renda_meio_sm_setor, color = ~ifelse(condicao == 1, "red", "blue")) %>% 
   addMarkers(lon_ps, lat_ps, label = "Caism Vila Mariana") %>% 
   addLegend(colors = c("red", "blue"), labels = c("Com condição", "Sem condição"))
 ```

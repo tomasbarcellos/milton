@@ -8,16 +8,23 @@
 #'
 
 get_addr <- function(address = NULL){
-  if (is.numeric(address)) {
-    return(get_addr(cep(address)))
+  if (length(address) > 1) {
+    return(
+      address %>%
+        purrr::map(get_addr) %>%
+        purrr::reduce(c)
+    )
   }
 
   vazio <- sf::st_sfc(sf::st_point(), crs = 4674)
 
-  if(suppressWarnings(is.null(address))) {
+  if(suppressWarnings(is.null(address) | isTRUE(is.na(address)))) {
     return(vazio)
   }
 
+  if (is_cep(address)) {
+    return(get_addr(cep(address)))
+  }
 
   address <- gsub("\\s+", "\\%20", address)
   tryCatch(

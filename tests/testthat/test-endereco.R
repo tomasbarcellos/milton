@@ -29,10 +29,13 @@ test_that("Erros sao suaves", {
 
 })
 
-test_that("Retorna lat long de CEP", {
-  expect_equal(get_addr(88063000), get_addr("Avenida pequeno principe"))
+test_that("Possui comportamento vetorizado", {
+  resp1 <- get_addr(c("Avenida pequeno príncipe", "Rua Vergueiro"))
+  expect_s3_class(resp1, "sfc")
+  expect_length(resp1, 2)
+})
 
-  expect_equal(milton:::cep(70050000), "Esplanada Dos Ministérios")
-  expect_equal(milton:::cep(68915970), "Avenida Costa e Silva")
-
+test_that("Retorna ponto vazio quando input é NA", {
+  expect_equal(get_addr(NA),
+               sf::st_sfc(sf::st_point(), crs = 4674))
 })
