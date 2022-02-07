@@ -130,10 +130,10 @@
 <p><img src="reference/figures/README-unnamed-chunk-6-1.png" width="100%"></p>
 <p>A API do pacote foi construída buscando permitir o uso do pipe (<code><a href="reference/%&gt;%.html">%&gt;%</a></code>).</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">geo_cast</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_addr.html">get_addr</a></span><span class="op">(</span><span class="st">"Estádio Arena Castelão"</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+<code class="sourceCode R"><span class="va">geo_museu</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_addr.html">get_addr</a></span><span class="op">(</span><span class="st">"Museu da Língua Portuguesa"</span><span class="op">)</span> <span class="op">%&gt;%</span> 
   <span class="fu"><a href="reference/geopart.html">geopart</a></span><span class="op">(</span><span class="va">mun</span><span class="op">)</span>
 
-<span class="fu">ggplot</span><span class="op">(</span><span class="va">mun</span><span class="op">[</span><span class="va">geo_cast</span>, <span class="op">]</span><span class="op">)</span> <span class="op">+</span>
+<span class="fu">ggplot</span><span class="op">(</span><span class="va">mun</span><span class="op">[</span><span class="va">geo_museu</span>, <span class="op">]</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">geom_sf</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">theme_void</span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-7-1.png" width="100%"></p>
@@ -162,25 +162,25 @@
     <span class="st">"Rua Bela cruz, 40"</span>
   <span class="op">)</span>
 <span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu">mutate</span><span class="op">(</span>latlon <span class="op">=</span> <span class="fu">map</span><span class="op">(</span><span class="va">endereco</span>, <span class="va">get_addr</span><span class="op">)</span><span class="op">)</span>
+  <span class="fu">mutate</span><span class="op">(</span>latlon <span class="op">=</span> <span class="fu"><a href="reference/get_addr.html">get_addr</a></span><span class="op">(</span><span class="va">endereco</span><span class="op">)</span><span class="op">)</span>
 
 <span class="va">pacientes</span>
 <span class="co">#&gt; # A tibble: 3 x 3</span>
-<span class="co">#&gt;   paciente endereco                    latlon           </span>
-<span class="co">#&gt;   &lt;chr&gt;    &lt;chr&gt;                       &lt;list&gt;           </span>
-<span class="co">#&gt; 1 A        Av. Dr. Altino Arantes, 941 &lt;POINT (-46.6...&gt;</span>
-<span class="co">#&gt; 2 B        Rua Gandavo, 349, São Paulo &lt;POINT (-46.6...&gt;</span>
-<span class="co">#&gt; 3 C        Rua Bela cruz, 40           &lt;POINT (-46.5...&gt;</span></code></pre></div>
+<span class="co">#&gt;   paciente endereco                                   latlon</span>
+<span class="co">#&gt;   &lt;chr&gt;    &lt;chr&gt;                                 &lt;POINT [°]&gt;</span>
+<span class="co">#&gt; 1 A        Av. Dr. Altino Arantes, 941  (-46.6368 -23.60279)</span>
+<span class="co">#&gt; 2 B        Rua Gandavo, 349, São Paulo (-46.64136 -23.59199)</span>
+<span class="co">#&gt; 3 C        Rua Bela cruz, 40            (-46.5806 -23.57739)</span></code></pre></div>
 <p>E agora é possível calcular a distância entre esses pontos e a Escola Paulista de Medicina.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">pacientes</span> <span class="op">%&gt;%</span> 
-  <span class="fu">mutate</span><span class="op">(</span>distancia_km <span class="op">=</span> <span class="fu">map_dbl</span><span class="op">(</span><span class="va">latlon</span>, <span class="va">distancia</span>, y <span class="op">=</span> <span class="va">epm</span><span class="op">)</span><span class="op">)</span>
+  <span class="fu">mutate</span><span class="op">(</span>distancia_km <span class="op">=</span> <span class="fu"><a href="reference/distancia.html">distancia</a></span><span class="op">(</span><span class="va">latlon</span>, <span class="va">epm</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 3 x 4</span>
-<span class="co">#&gt;   paciente endereco                    latlon            distancia_km</span>
-<span class="co">#&gt;   &lt;chr&gt;    &lt;chr&gt;                       &lt;list&gt;                   &lt;dbl&gt;</span>
-<span class="co">#&gt; 1 A        Av. Dr. Altino Arantes, 941 &lt;POINT (-46.6...&gt;        0.752</span>
-<span class="co">#&gt; 2 B        Rua Gandavo, 349, São Paulo &lt;POINT (-46.6...&gt;        0.827</span>
-<span class="co">#&gt; 3 C        Rua Bela cruz, 40           &lt;POINT (-46.5...&gt;        6.82</span></code></pre></div>
+<span class="co">#&gt;   paciente endereco                                   latlon distancia_km[,1]</span>
+<span class="co">#&gt;   &lt;chr&gt;    &lt;chr&gt;                                 &lt;POINT [°]&gt;            &lt;dbl&gt;</span>
+<span class="co">#&gt; 1 A        Av. Dr. Altino Arantes, 941  (-46.6368 -23.60279)            0.752</span>
+<span class="co">#&gt; 2 B        Rua Gandavo, 349, São Paulo (-46.64136 -23.59199)            0.827</span>
+<span class="co">#&gt; 3 C        Rua Bela cruz, 40            (-46.5806 -23.57739)            6.82</span></code></pre></div>
 <p>Há um conjunto de funções que permite identificar, por exemplo, o local mais adequado para tratar determinado paciente:</p>
 <ol>
 <li>
@@ -194,12 +194,10 @@
                <span class="st">"Hospital Dom Alvarenga"</span>,
                <span class="st">"Hospital Paulistano"</span><span class="op">)</span>
 
-<span class="va">geo_hospitais</span> <span class="op">&lt;-</span> <span class="va">hospitais</span> <span class="op">%&gt;%</span> 
-  <span class="fu">map</span><span class="op">(</span><span class="va">get_addr</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu">reduce</span><span class="op">(</span><span class="va">c</span><span class="op">)</span></code></pre></div>
+<span class="va">geo_hospitais</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_addr.html">get_addr</a></span><span class="op">(</span><span class="va">hospitais</span><span class="op">)</span></code></pre></div>
 <p>É possível identificar a distância dos hospitais para o paciente C:</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">paciente_C</span> <span class="op">&lt;-</span> <span class="va">pacientes</span><span class="op">$</span><span class="va">latlon</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span>
+<code class="sourceCode R"><span class="va">paciente_C</span> <span class="op">&lt;-</span> <span class="va">pacientes</span><span class="op">$</span><span class="va">latlon</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span>
 <span class="fu"><a href="reference/distancia.html">distancia</a></span><span class="op">(</span><span class="va">paciente_C</span>, <span class="va">geo_hospitais</span><span class="op">)</span>
 <span class="co">#&gt;          [,1]     [,2]    [,3]</span>
 <span class="co">#&gt; [1,] 6.802523 3.571139 6.42353</span></code></pre></div>
@@ -209,7 +207,7 @@
 <span class="co">#&gt; [1] 3.571139</span></code></pre></div>
 <p>E o hospital mais próximo.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">prox</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/nearplace.html">nearplace</a></span><span class="op">(</span><span class="va">paciente_C</span>, <span class="va">geo_hospitais</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">prox</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/which_nearplace.html">nearplace</a></span><span class="op">(</span><span class="va">paciente_C</span>, <span class="va">geo_hospitais</span><span class="op">)</span>
 <span class="va">idx</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="va">prox</span> <span class="op">==</span> <span class="va">geo_hospitais</span><span class="op">)</span>
 <span class="va">hospitais</span><span class="op">[</span><span class="va">idx</span><span class="op">]</span>
 <span class="co">#&gt; [1] "Hospital Dom Alvarenga"</span></code></pre></div>
@@ -220,7 +218,7 @@
 <p>Tomemos um conjunto qualquer de CEPs.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">df_ceps</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="op">(</span>
-  cep <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"01215010"</span>, <span class="st">"01508010"</span>, <span class="st">"01519000"</span>, <span class="st">"01526010"</span>, <span class="st">"02180080"</span>, 
+  ceps <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"01215010"</span>, <span class="st">"01508010"</span>, <span class="st">"01519000"</span>, <span class="st">"01526010"</span>, <span class="st">"02180080"</span>, 
           <span class="st">"02849170"</span>, <span class="st">"03347070"</span>, <span class="st">"03380150"</span>, <span class="st">"03590080"</span>, <span class="st">"03737230"</span>, 
           <span class="st">"04011060"</span>, <span class="st">"04018000"</span>, <span class="st">"04050060"</span>, <span class="st">"04108001"</span>, <span class="st">"04111000"</span>,
           <span class="st">"04233140"</span>, <span class="st">"04421150"</span>, <span class="st">"04433180"</span>, <span class="st">"04633030"</span>, <span class="st">"04813190"</span>,
@@ -234,13 +232,13 @@
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span>
 <span class="va">df_pacientes</span> <span class="op">&lt;-</span> <span class="va">df_ceps</span> <span class="op">%&gt;%</span> 
   <span class="fu">mutate</span><span class="op">(</span>
-    id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_along</a></span><span class="op">(</span><span class="va">cep</span><span class="op">)</span>,
-    condicao <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">cep</span><span class="op">)</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+    id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq_along</a></span><span class="op">(</span><span class="va">ceps</span><span class="op">)</span>,
+    condicao <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">ceps</span><span class="op">)</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
   <span class="op">)</span>
 
 <span class="va">df_pacientes</span>
 <span class="co">#&gt; # A tibble: 39 x 3</span>
-<span class="co">#&gt;    cep         id condicao</span>
+<span class="co">#&gt;    ceps        id condicao</span>
 <span class="co">#&gt;    &lt;chr&gt;    &lt;int&gt;    &lt;dbl&gt;</span>
 <span class="co">#&gt;  1 01215010     1        0</span>
 <span class="co">#&gt;  2 01508010     2        0</span>
@@ -267,8 +265,23 @@
 <a href="#1-georreferenciamento-dos-pacientes" class="anchor"></a>1. Georreferenciamento dos pacientes</h3>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">geo_pacientes</span> <span class="op">&lt;-</span> <span class="va">df_pacientes</span> <span class="op">%&gt;%</span> 
-  <span class="fu">mutate</span><span class="op">(</span>endereco <span class="op">=</span> <span class="fu">map_chr</span><span class="op">(</span><span class="va">cep</span>, <span class="fu">milton</span><span class="fu">:::</span><span class="va"><a href="reference/cep.html">cep</a></span><span class="op">)</span>,
-         ponto <span class="op">=</span> <span class="fu">map</span><span class="op">(</span><span class="va">endereco</span>, <span class="va">get_addr</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+  <span class="fu">mutate</span><span class="op">(</span>endereco <span class="op">=</span> <span class="fu"><a href="reference/cep.html">cep</a></span><span class="op">(</span><span class="va">ceps</span><span class="op">)</span>,
+         ponto <span class="op">=</span> <span class="fu"><a href="reference/get_addr.html">get_addr</a></span><span class="op">(</span><span class="va">endereco</span><span class="op">)</span><span class="op">)</span>
+<span class="va">geo_pacientes</span>
+<span class="co">#&gt; # A tibble: 39 x 5</span>
+<span class="co">#&gt;    ceps        id condicao endereco                                        ponto</span>
+<span class="co">#&gt;    &lt;chr&gt;    &lt;int&gt;    &lt;dbl&gt; &lt;chr&gt;                                     &lt;POINT [°]&gt;</span>
+<span class="co">#&gt;  1 01215010     1        0 Rua Helvétia, São Paulo          (-46.64122 -23.5331)</span>
+<span class="co">#&gt;  2 01508010     2        0 Rua Taguá, São Paulo            (-46.63652 -23.56167)</span>
+<span class="co">#&gt;  3 01519000     3        0 Rua do Lavapés, São Paulo       (-46.62748 -23.56164)</span>
+<span class="co">#&gt;  4 01526010     4        1 Rua Tenente Otávio Gomes, São ~ (-46.63209 -23.56342)</span>
+<span class="co">#&gt;  5 02180080     5        0 Rua Soldado Manasses de Aguiar~ (-46.56587 -23.51827)</span>
+<span class="co">#&gt;  6 02849170     6        1 Rua Bernardo Rincon, São Paulo  (-46.68629 -23.46706)</span>
+<span class="co">#&gt;  7 03347070     7        1 Rua Maestro Artur Elias Kauffm~  (-46.5665 -23.56242)</span>
+<span class="co">#&gt;  8 03380150     8        1 Rua Cruzeiro dos Peixotos, São~ (-46.53379 -23.57575)</span>
+<span class="co">#&gt;  9 03590080     9        0 Rua Padre Manuel Barreto, São ~ (-46.48273 -23.54557)</span>
+<span class="co">#&gt; 10 03737230    10        0 Rua Conceição do Rio Verde, Sã~ (-46.50943 -23.51041)</span>
+<span class="co">#&gt; # ... with 29 more rows</span></code></pre></div>
 </div>
 <div id="2-identificação-do-setor-censitário-em-que-os-pacientes-estão-localizados" class="section level3">
 <h3 class="hasAnchor">
@@ -276,7 +289,22 @@
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">setor_paciente</span> <span class="op">&lt;-</span> <span class="va">geo_pacientes</span> <span class="op">%&gt;%</span> 
   <span class="fu">mutate</span><span class="op">(</span>idx <span class="op">=</span> <span class="fu">map_int</span><span class="op">(</span><span class="va">ponto</span>, <span class="va">geopart</span>, <span class="va">setores</span><span class="op">)</span>,
-         setor <span class="op">=</span> <span class="va">setores</span><span class="op">$</span><span class="va">code_tract</span><span class="op">[</span><span class="va">idx</span><span class="op">]</span><span class="op">)</span></code></pre></div>
+         setor <span class="op">=</span> <span class="va">setores</span><span class="op">$</span><span class="va">code_tract</span><span class="op">[</span><span class="va">idx</span><span class="op">]</span><span class="op">)</span>
+<span class="va">setor_paciente</span>
+<span class="co">#&gt; # A tibble: 39 x 7</span>
+<span class="co">#&gt;    ceps        id condicao endereco                           ponto   idx setor </span>
+<span class="co">#&gt;    &lt;chr&gt;    &lt;int&gt;    &lt;dbl&gt; &lt;chr&gt;                        &lt;POINT [°]&gt; &lt;int&gt; &lt;chr&gt; </span>
+<span class="co">#&gt;  1 01215010     1        0 Rua Helvétia, São~  (-46.64122 -23.5331) 13923 35503~</span>
+<span class="co">#&gt;  2 01508010     2        0 Rua Taguá, São Pa~ (-46.63652 -23.56167) 10240 35503~</span>
+<span class="co">#&gt;  3 01519000     3        0 Rua do Lavapés, S~ (-46.62748 -23.56164) 10223 35503~</span>
+<span class="co">#&gt;  4 01526010     4        1 Rua Tenente Otávi~ (-46.63209 -23.56342) 10167 35503~</span>
+<span class="co">#&gt;  5 02180080     5        0 Rua Soldado Manas~ (-46.56587 -23.51827) 17418 35503~</span>
+<span class="co">#&gt;  6 02849170     6        1 Rua Bernardo Rinc~ (-46.68629 -23.46706)  1001 35503~</span>
+<span class="co">#&gt;  7 03347070     7        1 Rua Maestro Artur~  (-46.5665 -23.56242)   107 35503~</span>
+<span class="co">#&gt;  8 03380150     8        1 Rua Cruzeiro dos ~ (-46.53379 -23.57575) 16920 35503~</span>
+<span class="co">#&gt;  9 03590080     9        0 Rua Padre Manuel ~ (-46.48273 -23.54557)   536 35503~</span>
+<span class="co">#&gt; 10 03737230    10        0 Rua Conceição do ~ (-46.50943 -23.51041) 12705 35503~</span>
+<span class="co">#&gt; # ... with 29 more rows</span></code></pre></div>
 </div>
 <div id="3-relacionamento-com-dados-do-ipvs-do-referido-setor-censitário" class="section level3">
 <h3 class="hasAnchor">
@@ -287,76 +315,81 @@
   <span class="fu">select</span><span class="op">(</span>setor <span class="op">=</span> <span class="va">codigo_do_setor_censitario</span>, 
          idade_media_setor <span class="op">=</span> <span class="va">idade_media_das_pessoas_responsaveis</span>, 
          p_renda_meio_sm_setor <span class="op">=</span>  <span class="va">proporcao_de_domicilios_particulares_com_rendimento_nominal_mensal_de_ate_1_2_s_m</span>,
-         p_alfabetizadas_setor <span class="op">=</span> <span class="va">proporcao_de_pessoas_responsaveis_alfabetizadas</span><span class="op">)</span></code></pre></div>
+         p_alfabetizadas_setor <span class="op">=</span> <span class="va">proporcao_de_pessoas_responsaveis_alfabetizadas</span><span class="op">)</span>
+<span class="co">#&gt; Rows: 73 Columns: 2</span>
+<span class="co">#&gt; -- Column specification --------------------------------------------------------</span>
+<span class="co">#&gt; Delimiter: "\t"</span>
+<span class="co">#&gt; chr (2): Variável, Descrição</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; i Use `spec()` to retrieve the full column specification for this data.</span>
+<span class="co">#&gt; i Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
+<span class="co">#&gt; i Using "','" as decimal and "'.'" as grouping mark. Use `read_delim()` for more control.</span>
+<span class="co">#&gt; Rows: 66096 Columns: 51</span>
+<span class="co">#&gt; -- Column specification --------------------------------------------------------</span>
+<span class="co">#&gt; Delimiter: ";"</span>
+<span class="co">#&gt; chr  (5): v2, v4, v6, v62, v9</span>
+<span class="co">#&gt; dbl (46): v1, v3, v5, v61, v7, v8, v10, v11, v12, v13, v14, v15, v16, v17, v...</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; i Use `spec()` to retrieve the full column specification for this data.</span>
+<span class="co">#&gt; i Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></code></pre></div>
 <p>Relacionar com dados dos pacientes</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">paciente_ipvs</span> <span class="op">&lt;-</span> <span class="va">setor_paciente</span> <span class="op">%&gt;%</span> 
   <span class="fu">left_join</span><span class="op">(</span><span class="va">ipvs</span>, by <span class="op">=</span> <span class="st">"setor"</span><span class="op">)</span>
-<span class="va">paciente_ipvs</span>
-<span class="co">#&gt; # A tibble: 39 x 10</span>
-<span class="co">#&gt;    cep         id condicao endereco       ponto      idx setor  idade_media_set~</span>
-<span class="co">#&gt;    &lt;chr&gt;    &lt;int&gt;    &lt;dbl&gt; &lt;chr&gt;          &lt;list&gt;   &lt;int&gt; &lt;chr&gt;             &lt;dbl&gt;</span>
-<span class="co">#&gt;  1 01215010     1        0 Rua Helvétia   &lt;POINT ~ 13923 35503~             41.7</span>
-<span class="co">#&gt;  2 01508010     2        0 Rua Taguá      &lt;POINT ~ 10240 35503~             44.3</span>
-<span class="co">#&gt;  3 01519000     3        0 Rua do Lavapés &lt;POINT ~ 10223 35503~             37.6</span>
-<span class="co">#&gt;  4 01526010     4        1 Rua Tenente O~ &lt;POINT ~ 10167 35503~             48.4</span>
-<span class="co">#&gt;  5 02180080     5        0 Rua Soldado M~ &lt;POINT ~ 17418 35503~             50.0</span>
-<span class="co">#&gt;  6 02849170     6        1 Rua Bernardo ~ &lt;POINT ~  1001 35503~             48.3</span>
-<span class="co">#&gt;  7 03347070     7        1 Rua Maestro A~ &lt;POINT ~   107 35503~             56.0</span>
-<span class="co">#&gt;  8 03380150     8        1 Rua Cruzeiro ~ &lt;POINT ~ 16920 35503~             48.6</span>
-<span class="co">#&gt;  9 03590080     9        0 Rua Padre Man~ &lt;POINT ~   536 35503~             49.4</span>
-<span class="co">#&gt; 10 03737230    10        0 Rua Conceição~ &lt;POINT ~    NA &lt;NA&gt;               NA  </span>
-<span class="co">#&gt; # ... with 29 more rows, and 2 more variables: p_renda_meio_sm_setor &lt;dbl&gt;,</span>
-<span class="co">#&gt; #   p_alfabetizadas_setor &lt;dbl&gt;</span></code></pre></div>
+<span class="fu">glimpse</span><span class="op">(</span><span class="va">paciente_ipvs</span><span class="op">)</span>
+<span class="co">#&gt; Rows: 39</span>
+<span class="co">#&gt; Columns: 10</span>
+<span class="co">#&gt; $ ceps                  &lt;chr&gt; "01215010", "01508010", "01519000", "01526010", ~</span>
+<span class="co">#&gt; $ id                    &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 1~</span>
+<span class="co">#&gt; $ condicao              &lt;dbl&gt; 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 1, 0, ~</span>
+<span class="co">#&gt; $ endereco              &lt;chr&gt; "Rua Helvétia, São Paulo", "Rua Taguá, São Paulo~</span>
+<span class="co">#&gt; $ ponto                 &lt;POINT [°]&gt; POINT (-46.64122 -23.5331), POINT (-46.636~</span>
+<span class="co">#&gt; $ idx                   &lt;int&gt; 13923, 10240, 10223, 10167, 17418, 1001, 107, 16~</span>
+<span class="co">#&gt; $ setor                 &lt;chr&gt; "355030869000101", "355030849000088", "355030849~</span>
+<span class="co">#&gt; $ idade_media_setor     &lt;dbl&gt; 41.70769, 44.28804, 37.60440, 48.37607, 50.01099~</span>
+<span class="co">#&gt; $ p_renda_meio_sm_setor &lt;dbl&gt; 9.2105263, 1.1627907, 12.8205128, 2.5641026, 9.8~</span>
+<span class="co">#&gt; $ p_alfabetizadas_setor &lt;dbl&gt; 93.53846, 97.82609, 95.97070, 98.71795, 97.80220~</span></code></pre></div>
 </div>
 <div id="4-identificação-do-ponto-mais-próximo-de-cada-paciente-dado-uma-lista" class="section level3">
 <h3 class="hasAnchor">
 <a href="#4-identifica%C3%A7%C3%A3o-do-ponto-mais-pr%C3%B3ximo-de-cada-paciente-dado-uma-lista" class="anchor"></a>4. Identificação do ponto mais próximo de cada paciente (dado uma lista)</h3>
 <p>Dados dois pontos, identificar aquele mais próximo de cada paciente.</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">ps</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fu"><a href="reference/get_addr.html">get_addr</a></span><span class="op">(</span><span class="st">"04017-030"</span><span class="op">)</span>, <span class="fu"><a href="reference/get_addr.html">get_addr</a></span><span class="op">(</span><span class="st">"Hospital Albert Einstein"</span><span class="op">)</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">ps</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_addr.html">get_addr</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"04017-030"</span>, <span class="st">"Hospital Albert Einstein"</span><span class="op">)</span><span class="op">)</span>
 <span class="va">nomes_ps</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Caism Vila Mariana"</span>, <span class="st">"Einstein"</span><span class="op">)</span>
 
 <span class="va">paciente_ipvs</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">9</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">select</span><span class="op">(</span><span class="va">id</span>, <span class="va">condicao</span>, <span class="va">cep</span>, <span class="va">endereco</span>, <span class="va">ponto</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu">mutate</span><span class="op">(</span>ponto <span class="op">=</span> <span class="fu">reduce</span><span class="op">(</span><span class="va">ponto</span>, <span class="va">c</span><span class="op">)</span>,
-         prox <span class="op">=</span> <span class="va">nomes_ps</span><span class="op">[</span><span class="fu">map</span><span class="op">(</span><span class="fu"><a href="reference/nearplace.html">nearplace</a></span><span class="op">(</span><span class="va">ponto</span>, <span class="va">ps</span><span class="op">)</span>, <span class="fu">sf</span><span class="fu">::</span><span class="va"><a href="https://r-spatial.github.io/sf/reference/geos_binary_pred.html">st_equals</a></span>, <span class="va">ps</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span><span class="op">(</span><span class="op">)</span><span class="op">]</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 9 x 6</span>
-<span class="co">#&gt;      id condicao cep      endereco                               ponto prox     </span>
-<span class="co">#&gt;   &lt;int&gt;    &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;                            &lt;POINT [°]&gt; &lt;chr&gt;    </span>
-<span class="co">#&gt; 1     1        0 01215010 Rua Helvétia            (-46.64122 -23.5331) Caism Vi~</span>
-<span class="co">#&gt; 2     2        0 01508010 Rua Taguá              (-46.63652 -23.56167) Caism Vi~</span>
-<span class="co">#&gt; 3     3        0 01519000 Rua do Lavapés         (-46.62748 -23.56164) Caism Vi~</span>
-<span class="co">#&gt; 4     4        1 01526010 Rua Tenente Otávio Go~ (-46.63209 -23.56342) Caism Vi~</span>
-<span class="co">#&gt; 5     5        0 02180080 Rua Soldado Manasses ~ (-46.56587 -23.51827) Caism Vi~</span>
-<span class="co">#&gt; 6     6        1 02849170 Rua Bernardo Rincon    (-46.68629 -23.46706) Caism Vi~</span>
-<span class="co">#&gt; 7     7        1 03347070 Rua Maestro Artur Eli~  (-46.5665 -23.56242) Caism Vi~</span>
-<span class="co">#&gt; 8     8        1 03380150 Rua Cruzeiro dos Peix~ (-46.53379 -23.57575) Caism Vi~</span>
-<span class="co">#&gt; 9     9        0 03590080 Rua Padre Manuel Barr~ (-46.48273 -23.54557) Caism Vi~</span></code></pre></div>
+  <span class="fu">select</span><span class="op">(</span><span class="va">id</span>, <span class="va">condicao</span>, <span class="va">ceps</span>, <span class="va">endereco</span>, <span class="va">ponto</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">mutate</span><span class="op">(</span>prox <span class="op">=</span> <span class="fu"><a href="reference/which_nearplace.html">nearplace</a></span><span class="op">(</span><span class="va">ponto</span>, <span class="va">ps</span><span class="op">)</span>,
+         nome_prox <span class="op">=</span> <span class="va">nomes_ps</span><span class="op">[</span><span class="fu"><a href="reference/which_nearplace.html">which_nearplace</a></span><span class="op">(</span><span class="va">ponto</span>, <span class="va">ps</span><span class="op">)</span><span class="op">]</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">glimpse</span><span class="op">(</span><span class="op">)</span>
+<span class="co">#&gt; Rows: 39</span>
+<span class="co">#&gt; Columns: 7</span>
+<span class="co">#&gt; $ id        &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 1~</span>
+<span class="co">#&gt; $ condicao  &lt;dbl&gt; 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 1, 0, 1, 0, 0, 0, ~</span>
+<span class="co">#&gt; $ ceps      &lt;chr&gt; "01215010", "01508010", "01519000", "01526010", "02180080", ~</span>
+<span class="co">#&gt; $ endereco  &lt;chr&gt; "Rua Helvétia, São Paulo", "Rua Taguá, São Paulo", "Rua do L~</span>
+<span class="co">#&gt; $ ponto     &lt;POINT [°]&gt; POINT (-46.64122 -23.5331), POINT (-46.63652 -23.56167~</span>
+<span class="co">#&gt; $ prox      &lt;POINT [°]&gt; POINT (-46.63795 -23.58774), POINT (-46.63795 -23.5877~</span>
+<span class="co">#&gt; $ nome_prox &lt;chr&gt; "Caism Vila Mariana", "Caism Vila Mariana", "Caism Vila Mari~</span></code></pre></div>
 </div>
 <div id="5-cálculo-da-distância-entre-os-pacitentes-e-o-ponto-definido-em-4" class="section level3">
 <h3 class="hasAnchor">
 <a href="#5-c%C3%A1lculo-da-dist%C3%A2ncia-entre-os-pacitentes-e-o-ponto-definido-em-4" class="anchor"></a>5. Cálculo da distância entre os pacitentes e o ponto definido em 4)</h3>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">paciente_ipvs</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">9</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">select</span><span class="op">(</span><span class="va">id</span>, <span class="va">condicao</span>, <span class="va">cep</span>, <span class="va">endereco</span>, <span class="va">ponto</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu">mutate</span><span class="op">(</span>ponto <span class="op">=</span> <span class="fu">reduce</span><span class="op">(</span><span class="va">ponto</span>, <span class="va">c</span><span class="op">)</span>,
-         <span class="co"># Em quilometros</span>
-         distancias <span class="op">=</span> <span class="fu"><a href="reference/distancia.html">distancia</a></span><span class="op">(</span><span class="va">ponto</span>, <span class="va">ps</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 9 x 6</span>
-<span class="co">#&gt;      id condicao cep      endereco                    ponto distancias[,1]  [,2]</span>
-<span class="co">#&gt;   &lt;int&gt;    &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;                 &lt;POINT [°]&gt;          &lt;dbl&gt; &lt;dbl&gt;</span>
-<span class="co">#&gt; 1     1        0 01215010 Rua Helvét~  (-46.64122 -23.5331)           6.08  6.56</span>
-<span class="co">#&gt; 2     2        0 01508010 Rua Taguá   (-46.63652 -23.56167)           2.90  3.38</span>
-<span class="co">#&gt; 3     3        0 01519000 Rua do Lav~ (-46.62748 -23.56164)           3.09  3.57</span>
-<span class="co">#&gt; 4     4        1 01526010 Rua Tenent~ (-46.63209 -23.56342)           2.77  3.25</span>
-<span class="co">#&gt; 5     5        0 02180080 Rua Soldad~ (-46.56587 -23.51827)          10.7  11.1 </span>
-<span class="co">#&gt; 6     6        1 02849170 Rua Bernar~ (-46.68629 -23.46706)          14.3  14.7 </span>
-<span class="co">#&gt; 7     7        1 03347070 Rua Maestr~  (-46.5665 -23.56242)           7.81  8.07</span>
-<span class="co">#&gt; 8     8        1 03380150 Rua Cruzei~ (-46.53379 -23.57575)          10.7  10.9 </span>
-<span class="co">#&gt; 9     9        0 03590080 Rua Padre ~ (-46.48273 -23.54557)          16.5  16.7</span></code></pre></div>
+  <span class="fu">select</span><span class="op">(</span><span class="va">id</span>, <span class="va">condicao</span>, <span class="va">ceps</span>, <span class="va">endereco</span>, <span class="va">ponto</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="co"># Em quilometros</span>
+  <span class="fu">mutate</span><span class="op">(</span>distancias <span class="op">=</span> <span class="fu"><a href="reference/distancia.html">distancia</a></span><span class="op">(</span><span class="va">ponto</span>, <span class="va">ps</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>  
+  <span class="fu">glimpse</span><span class="op">(</span><span class="op">)</span>
+<span class="co">#&gt; Rows: 39</span>
+<span class="co">#&gt; Columns: 6</span>
+<span class="co">#&gt; $ id         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, ~</span>
+<span class="co">#&gt; $ condicao   &lt;dbl&gt; 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 1, 1, 1, 0, 1, 0, 1, 0, 0, 0,~</span>
+<span class="co">#&gt; $ ceps       &lt;chr&gt; "01215010", "01508010", "01519000", "01526010", "02180080",~</span>
+<span class="co">#&gt; $ endereco   &lt;chr&gt; "Rua Helvétia, São Paulo", "Rua Taguá, São Paulo", "Rua do ~</span>
+<span class="co">#&gt; $ ponto      &lt;POINT [°]&gt; POINT (-46.64122 -23.5331), POINT (-46.63652 -23.5616~</span>
+<span class="co">#&gt; $ distancias &lt;dbl[,2]&gt; &lt;matrix[26 x 2]&gt;</span></code></pre></div>
 </div>
 <div id="6-criar-mapa-dos-pacientes-leaflet" class="section level3">
 <h3 class="hasAnchor">
@@ -367,12 +400,11 @@
 <span class="va">lon_ps</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span><span class="op">(</span><span class="va">ps</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>
 
 <span class="va">paciente_ipvs</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fl">9</span><span class="op">)</span> <span class="op">%&gt;%</span> 
   <span class="fu">mutate</span><span class="op">(</span>lon <span class="op">=</span> <span class="fu">map_dbl</span><span class="op">(</span><span class="va">ponto</span>, <span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span><span class="op">(</span><span class="va">.x</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span>,
          lat <span class="op">=</span> <span class="fu">map_dbl</span><span class="op">(</span><span class="va">ponto</span>, <span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span><span class="op">(</span><span class="va">.x</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
   <span class="fu"><a href="https://rdrr.io/pkg/leaflet/man/leaflet.html">leaflet</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/pkg/leaflet/man/map-layers.html">addTiles</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>  <span class="co"># Add default OpenStreetMap map tiles</span>
-  <span class="fu"><a href="https://rdrr.io/pkg/leaflet/man/map-layers.html">addCircleMarkers</a></span><span class="op">(</span><span class="op">~</span><span class="va">lon</span>, <span class="op">~</span><span class="va">lat</span>, label <span class="op">=</span> <span class="op">~</span><span class="va">cep</span>, color <span class="op">=</span> <span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">condicao</span> <span class="op">==</span> <span class="fl">1</span>, <span class="st">"red"</span>, <span class="st">"blue"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu"><a href="https://rdrr.io/pkg/leaflet/man/map-layers.html">addCircleMarkers</a></span><span class="op">(</span><span class="op">~</span><span class="va">lon</span>, <span class="op">~</span><span class="va">lat</span>, label <span class="op">=</span> <span class="op">~</span><span class="va">p_renda_meio_sm_setor</span>, color <span class="op">=</span> <span class="op">~</span><span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">condicao</span> <span class="op">==</span> <span class="fl">1</span>, <span class="st">"red"</span>, <span class="st">"blue"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
   <span class="fu"><a href="https://rdrr.io/pkg/leaflet/man/map-layers.html">addMarkers</a></span><span class="op">(</span><span class="va">lon_ps</span>, <span class="va">lat_ps</span>, label <span class="op">=</span> <span class="st">"Caism Vila Mariana"</span><span class="op">)</span> <span class="op">%&gt;%</span> 
   <span class="fu"><a href="https://rdrr.io/pkg/leaflet/man/addLegend.html">addLegend</a></span><span class="op">(</span>colors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"red"</span>, <span class="st">"blue"</span><span class="op">)</span>, labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Com condição"</span>, <span class="st">"Sem condição"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p><img src="mapa.png"></p>
