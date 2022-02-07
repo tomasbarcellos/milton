@@ -1,6 +1,6 @@
 Package: milton
 Title: Geolocalizar Dados No Brasil
-Version: 0.0.1
+Version: 0.0.2
 Authors@R: person("Tomás", "Barcellos", email = "tomasbarcellos@gmail.com", role = c("aut", "cre"))
 Description: Geolocalizar dados no Brasil a partir de endere\\u00eo e CEP.
 Depends: R (>= 3.5.0)
