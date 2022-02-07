@@ -6,7 +6,7 @@ which_nearplace <- function(coords, targets){
   dists <- distancia(coords, targets)
 
   apply(dists, 1, which.min) %>%
-    map_dbl(~ifelse(length(.x) == 0, NA_real_, .x))
+    purrr::map_dbl(~ifelse(length(.x) == 0, NA_real_, .x))
 }
 
 ##' nearplace

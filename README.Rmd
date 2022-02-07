@@ -141,7 +141,7 @@ pacientes <- tibble(
     "Rua Bela cruz, 40"
   )
 ) %>% 
-  mutate(latlon = map(endereco, get_addr))
+  mutate(latlon = get_addr(endereco))
 
 pacientes
 ```
@@ -151,7 +151,7 @@ de Medicina.
 
 ```{r}
 pacientes %>% 
-  mutate(distancia_km = map_dbl(latlon, distancia, y = epm))
+  mutate(distancia_km = distancia(latlon, epm))
 ```
 
 Há um conjunto de funções que permite identificar, por exemplo, o local mais 
@@ -167,15 +167,13 @@ hospitais <- c("Hospital São Paulo",
                "Hospital Dom Alvarenga",
                "Hospital Paulistano")
 
-geo_hospitais <- hospitais %>% 
-  map(get_addr) %>% 
-  reduce(c)
+geo_hospitais <- get_addr(hospitais)
 ```
 
 É possível identificar a distância dos hospitais para o paciente C:
 
 ```{r}
-paciente_C <- pacientes$latlon[[3]]
+paciente_C <- pacientes$latlon[3]
 distancia(paciente_C, geo_hospitais)
 ```
 
@@ -257,15 +255,7 @@ setor_paciente
 
 Ler dados do Índice Paulista de Vulnerabilidade Social (IPVS).
 
-```{r, include=FALSE}
-ipvs <- ler_ipvs() %>% 
-  select(setor = codigo_do_setor_censitario, 
-         idade_media_setor = idade_media_das_pessoas_responsaveis, 
-         p_renda_meio_sm_setor =  proporcao_de_domicilios_particulares_com_rendimento_nominal_mensal_de_ate_1_2_s_m,
-         p_alfabetizadas_setor = proporcao_de_pessoas_responsaveis_alfabetizadas)
-```
-
-```{r, eval=FALSE}
+```{r}
 ipvs <- ler_ipvs() %>% 
   select(setor = codigo_do_setor_censitario, 
          idade_media_setor = idade_media_das_pessoas_responsaveis, 
@@ -291,7 +281,6 @@ ps <- get_addr(c("04017-030", "Hospital Albert Einstein"))
 nomes_ps <- c("Caism Vila Mariana", "Einstein")
 
 paciente_ipvs %>% 
-  # head() %>% 
   select(id, condicao, ceps, endereco, ponto) %>% 
   mutate(prox = nearplace(ponto, ps),
          nome_prox = nomes_ps[which_nearplace(ponto, ps)]) %>% 

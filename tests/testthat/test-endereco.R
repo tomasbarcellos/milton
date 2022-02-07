@@ -34,3 +34,8 @@ test_that("Possui comportamento vetorizado", {
   expect_s3_class(resp1, "sfc")
   expect_length(resp1, 2)
 })
+
+test_that("Retorna ponto vazio quando input é NA", {
+  expect_equal(get_addr(NA),
+               sf::st_sfc(sf::st_point(), crs = 4674))
+})

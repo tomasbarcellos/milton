@@ -27,3 +27,16 @@ cep <- function(x) {
 
   paste(logradouro, cidade, sep = ", ")
 }
+
+#' Verifica CEP
+#'
+#' @param x Valor para testar (texto ou numero)
+#'
+#' @return TRUE/FALSE
+is_cep <- function(x) {
+  x %>%
+    stringr::str_remove_all("[[:punct:]]") %>%
+    stringr::str_pad(8, pad = "0") %>%
+    stringr::str_detect("\\d{8}") %>%
+    magrittr::and(!is.na(x))
+}
