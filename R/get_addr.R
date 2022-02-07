@@ -8,10 +8,6 @@
 #'
 
 get_addr <- function(address = NULL){
-  if (is.numeric(address)) {
-    return(get_addr(cep(address)))
-  }
-
   if (length(address) > 1) {
     return(
       address %>%
@@ -26,6 +22,9 @@ get_addr <- function(address = NULL){
     return(vazio)
   }
 
+  if (is_cep(address)) {
+    return(get_addr(cep(address)))
+  }
 
   address <- gsub("\\s+", "\\%20", address)
   tryCatch(
