@@ -29,8 +29,8 @@ get_addr <- function(address = NULL){
   address <- gsub("\\s+", "\\%20", address)
   tryCatch(
     d <- jsonlite::fromJSON(
-      glue::glue("http://nominatim.openstreetmap.org/search/",
-                 "{address}?format=json&addressdetails=0&limit=1")
+      glue::glue("http://nominatim.openstreetmap.org/search?q=",
+                 "{address}&format=json&addressdetails=0&limit=1")
     ), error = function(c) return(vazio)
   )
 
