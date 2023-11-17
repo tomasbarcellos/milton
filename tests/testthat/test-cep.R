@@ -5,6 +5,7 @@ test_that("Retorna lat long de CEP", {
                "Avenida Pequeno Príncipe, Florianópolis")
   expect_equal(cep(70050000), "Esplanada Dos Ministérios, Brasília")
   expect_equal(cep(68915970), "Avenida Costa e Silva, Ferreira Gomes")
+  expect_equal(cep(68430000), "Igarapé-Miri, Pará")
 
   # CEP inexistente
   expect_true(is.na(cep(123)))

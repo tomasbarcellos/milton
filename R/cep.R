@@ -22,6 +22,8 @@ cep <- function(x) {
 
   if (length(texto) == 0) return(NA)
 
+  if (length(texto) == 2) return(paste(texto, collapse = ", "))
+
   logradouro <- texto[[1]]
   cidade <- texto[[4]]
 
